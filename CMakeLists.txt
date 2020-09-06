@@ -1,14 +1,10 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.10)
 project(raytracer)
 
-set(CMAKE_BUILD_TYPE release)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
+set(CMAKE_CXX_STANDARD 17)
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+include_directories(src)
 
-add_executable(
-  raytracer
-  src/main.cpp
-)
+add_subdirectory(src)
+add_subdirectory(tests)
+add_subdirectory(lib/googletest)

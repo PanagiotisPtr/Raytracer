@@ -1,0 +1,1 @@
+./build/tests/raytracer_tests

@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/panagiotispetridis/Projects/raytracer/src/main.cpp
+iostream
+-
+math/tensor.h
+/Users/panagiotispetridis/Projects/raytracer/src/math/tensor.h
+
+/Users/panagiotispetridis/Projects/raytracer/src/math/tensor.h
+vector
+-
+ostream
+-
+vector
+-
+initializer_list
+-
+

@@ -1,6 +1,5 @@
 #!/bin/bash
 mkdir build
 cd build
-cmake ..
-make
-mv bin ../bin
+cmake .. -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles"
+make all
