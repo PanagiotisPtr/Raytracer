@@ -8,8 +8,6 @@
 
 namespace math {
 
-static bool math_indexing = false;
-
 template<typename T, size_t size>
 class Tensor {
 public:
@@ -18,8 +16,18 @@ public:
         this->data = std::vector<Tensor<T, size-1> >(first, Tensor<T, size-1>(args...));
     }
 
-    Tensor<T, size-1> operator[](size_t idx) {
-        return this->data[idx - math_indexing];
+    Tensor<T, size-1>& operator[](size_t idx) {
+        return this->data[idx];
+    }
+
+    const Tensor<T, size-1>& operator[](size_t idx) const {
+        return this->data[idx];
+    }
+
+    Tensor<size_t, 2> shape() {
+        Tensor<size_t, 2> rv(1, size);
+
+        return rv;
     }
 
     friend std::ostream& operator<<(std::ostream& out, const Tensor& t) {
@@ -38,8 +46,22 @@ class Tensor<T, 1> {
 public:
     Tensor(size_t size) : data(size) {}
 
+    T& operator[](size_t idx) {
+        return data[idx];
+    }
+
+    const T& operator[](size_t idx) const {
+        return this->data[idx];
+    }
+
     void assign(std::initializer_list<T> l) {
         this->data = l;
+    }
+
+    Tensor<size_t, 2> shape() {
+        Tensor<size_t, 2> rv(1, 1);
+        rv[0][0] = data.size();
+        return rv;
     }
 
     friend std::ostream& operator<<(std::ostream& out, const Tensor<T, 1>& t) {
