@@ -8,6 +8,7 @@
 #include <initializer_list>
 
 #include "exceptions.h"
+#include "constants.h"
 
 namespace math {
 
@@ -36,6 +37,23 @@ public:
         out << "]";
 
         return out;
+    }
+
+    bool operator==(const Vector<T, S>& v) const {
+        for (std::size_t i = 0; i < S; i++) {
+            const T& a = v[i];
+            const T& b = this->operator[](i);
+            if (a > b && a - b > EQUALITY_DELTA)
+                return false;
+            else if (b - a > EQUALITY_DELTA)
+                return false;
+        }
+
+        return true;
+    }
+
+    bool operator!=(const Vector<T, S>& v) const {
+        return !((*this) == v);
     }
 };
 

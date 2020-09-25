@@ -38,6 +38,18 @@ public:
 
         return out;
     }
+
+    bool operator==(const Matrix<T, R, C>& m) const {
+        for (std::size_t i = 0; i < R; i++)
+            if (m[i] != this->operator[](i))
+                return false;
+
+        return true;
+    }
+
+    bool operator!=(const Matrix<T, R, C>& m) const {
+        return !((*this) == m);
+    }
 };
 
 } // namespace math
