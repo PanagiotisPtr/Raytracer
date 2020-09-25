@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <initializer_list>
+#include <cmath>
 
 #include "vector.h"
 #include "point.h"
@@ -115,6 +116,52 @@ public:
             std::is_same<VectorType, Point<T, sz> >::value, int> = 0>
     static VectorType divide(T c, const VectorType& v) {
         return Operations::divide<T, sz>(v, c);
+    }
+
+    // Magnitude
+    template<typename T, std::size_t sz>
+    static T magnitude(const Vector<T, sz>& v) {
+        T sum = 0;
+        for (std::size_t i = 0; i < sz; i++)
+            sum += v[i]*v[i];
+        
+        return std::sqrt(sum);
+    }
+
+    // Normalisation
+    template<typename T, std::size_t sz>
+    static Vector<T, sz> normalise(const Vector<T, sz>& v) {
+        T m = Operations::magnitude(v);
+
+        return Operations::divide(v, m);
+    }
+
+    // Dot product
+    template<typename T, std::size_t sz>
+    static T dotProduct(const Vector<T, sz>& v1, const Vector<T, sz>& v2) {
+        T rv = 0;
+        for (std::size_t i = 0; i < sz; i++)
+            rv += v1[i]*v2[i];
+        
+        return rv;
+    }
+
+    // Cross product (only defined for 3 dimensions)
+    template<typename T>
+    static Vector3D<T> dotProduct3D(const Vector3D<T>& v1, const Vector3D<T>& v2) {
+        const T& x1 = v1[0];
+        const T& y1 = v1[1];
+        const T& z1 = v1[2];
+
+        const T& x2 = v2[0];
+        const T& y2 = v2[1];
+        const T& z2 = v2[2];
+
+        return Vector3D<T>({
+            y1 * z2 - z1 * y2,
+            z1 * x2 - x1 * z2,
+            x1 * y2 - y1 * x2
+        });
     }
 
 };
