@@ -1,5 +1,5 @@
-#ifndef OPERATIONS_H
-#define OPERATIONS_H
+#ifndef MATH_OPERATIONS_H
+#define MATH_OPERATIONS_H
 
 #include <cstddef>
 #include <initializer_list>

@@ -1,5 +1,5 @@
-#ifndef OPERATORS_H
-#define OPERATORS_H
+#ifndef MATH_OPERATORS_H
+#define MATH_OPERATORS_H
 
 #include "operations.h"
 
