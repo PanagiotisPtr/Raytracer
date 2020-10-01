@@ -1,5 +1,5 @@
-#ifndef COLOUR_H
-#define COLOUR_H
+#ifndef DRAWING_COLOUR_H
+#define DRAWING_COLOUR_H
 
 #include <cstddef>
 #include <initializer_list>

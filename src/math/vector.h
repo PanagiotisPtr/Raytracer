@@ -1,5 +1,5 @@
-#ifndef VECTOR_H
-#define VECTOR_H
+#ifndef MATH_VECTOR_H
+#define MATH_VECTOR_H
 
 #include <array>
 #include <cstddef>

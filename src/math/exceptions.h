@@ -1,5 +1,5 @@
-#ifndef EXCEPTIONS_H
-#define EXCEPTIONS_H
+#ifndef MATH_EXCEPTIONS_H
+#define MATH_EXCEPTIONS_H
 
 #include <exception>
 

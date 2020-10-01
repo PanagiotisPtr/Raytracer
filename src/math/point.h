@@ -1,5 +1,5 @@
-#ifndef POINT_H
-#define POINT_H
+#ifndef MATH_POINT_H
+#define MATH_POINT_H
 
 #include <cstddef>
 #include <initializer_list>

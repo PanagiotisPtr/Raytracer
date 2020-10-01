@@ -5,6 +5,8 @@
 #include "math/matrix.h"
 #include "math/operations.h"
 #include "math/operators.h"
+#include "drawing/colour.h"
+#include "drawing/canvas.h"
 
 int main() {
     math::Point<float, 5> p = { 1, 2, 3, 4, 5 };
@@ -49,6 +51,22 @@ int main() {
     std::cout << (p == p) << std::endl;
 
     std::cout << (m == k) << std::endl;
+
+    drawing::Colour c1 = {1, 2, 3};
+    drawing::Colour c2 = {255,255,255};
+
+    drawing::Canvas<1, 2> canv1;
+    canv1[0][0] = c1;
+    canv1[0][1] = c2;
+
+    canv1[0][1] = {255, 0, 0};
+
+    std::cout << c1 << std::endl;
+
+    std::cout << c2 << std::endl;
+
+    std::cout << canv1 << std::endl;
+
 
     return 0;
 }
