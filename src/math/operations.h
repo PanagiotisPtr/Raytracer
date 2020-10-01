@@ -133,7 +133,7 @@ public:
     static Vector<T, sz> normalise(const Vector<T, sz>& v) {
         T m = Operations::magnitude(v);
 
-        return Operations::divide(v, m);
+        return Operations::divide<T, sz>(v, m);
     }
 
     // Dot product
@@ -148,7 +148,7 @@ public:
 
     // Cross product (only defined for 3 dimensions)
     template<typename T>
-    static Vector3D<T> dotProduct3D(const Vector3D<T>& v1, const Vector3D<T>& v2) {
+    static Vector3D<T> crossProduct3D(const Vector3D<T>& v1, const Vector3D<T>& v2) {
         const T& x1 = v1[0];
         const T& y1 = v1[1];
         const T& z1 = v1[2];
