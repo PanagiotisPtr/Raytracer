@@ -3,7 +3,7 @@
 
 namespace math {
 
-    const double EQUALITY_DELTA = 0.0001;
+    const double EQUALITY_DELTA = 0.00001;
 
 } // namespace math
 
