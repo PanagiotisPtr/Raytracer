@@ -206,6 +206,53 @@ public:
 
         return rv;
     }
+
+    // Matrix determinant for 1x1 matrix
+    template<typename T>
+    static T determinant(const Matrix<T, 1, 1>& m) {
+        return m[0][0];
+    }
+
+    // Matrix determinant
+    template<typename T, std::size_t S>
+    static T determinant(const Matrix<T, S, S>& m) {
+        T rv = 0;
+        for (std::size_t i = 0; i < S; i++) {
+            rv += m[0][i] * minorAtIndex(m, 0, i) * cofactorSignAtIndex<T>(0, i);
+        }
+
+        return rv;
+    }
+
+    // Matrix inverse
+    template<typename T, std::size_t S>
+    static Matrix<T, S, S> inverse(const Matrix<T, S, S>& m) {
+        const T d = determinant(m);
+
+        if (d == EQUALITY_DELTA) {
+            throw MatrixNotInvertableException();
+        }
+
+        Matrix<T, S, S> rv;
+        for (std::size_t i = 0; i < S; i++) {
+            for (std::size_t j = 0; j < S; j++) {
+                rv[j][i] = (minorAtIndex(m, i, j) * cofactorSignAtIndex<T>(i, j)) / d;
+            }
+        }
+
+        return rv;
+    }
+
+private:
+    template<typename T>
+    static T cofactorSignAtIndex(std::size_t i, std::size_t j) {
+        return (i + j) % 2 ? -1 : 1;
+    }
+
+    template<typename T, std::size_t S>
+    static T minorAtIndex(const Matrix<T, S, S>& m, std::size_t i, std::size_t j) {
+        return determinant(m.submatrix(i, j));
+    }
 };
 
 } // namespace math

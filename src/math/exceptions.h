@@ -11,6 +11,12 @@ struct InitialiserListSizeException : public std::exception {
     }
 };
 
+struct MatrixNotInvertableException : public std::exception {
+	const char * what () const throw () {
+    	return "The matrix cannot be inverted. It's determinant is 0.";
+    }
+};
+
 } // namespace math
 
 #endif

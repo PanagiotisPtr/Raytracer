@@ -29,12 +29,32 @@ public:
             this->operator[](i++) = value;
     }
 
-    static Matirx<T, R, R> getIdentity() {
+    static Matrix<T, R, R> getIdentity() {
         Matrix<T, R, R> rv;
 
         for (std::size_t i = 0; i < R; i++) {
             for (std::size_t j = 0; j < R; j++) {
                 rv[i][j] = i == j ? 1 : 0;
+            }
+        }
+
+        return rv;
+    }
+
+    Matrix<T, R-1, C-1> submatrix(std::size_t r, std::size_t c) const {
+        Matrix<T, R-1, C-1> rv;
+
+        for (std::size_t i = 0; i < R; i++) {
+            if (i == r) {
+                continue;
+            }
+
+            for (std::size_t j = 0; j < C; j++) {
+                if (j == c) {
+                    continue;
+                }
+
+                rv[i - (i > r)][j - (j > c)] = this->operator[](i)[j];
             }
         }
 
