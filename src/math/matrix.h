@@ -29,6 +29,18 @@ public:
             this->operator[](i++) = value;
     }
 
+    static Matirx<T, R, R> getIdentity() {
+        Matrix<T, R, R> rv;
+
+        for (std::size_t i = 0; i < R; i++) {
+            for (std::size_t j = 0; j < R; j++) {
+                rv[i][j] = i == j ? 1 : 0;
+            }
+        }
+
+        return rv;
+    }
+
     template<typename N, std::size_t S1, std::size_t S2>
     friend std::ostream& operator<<(std::ostream& out, const Matrix<N, S1, S2>& m) {
         out << "[ ";
