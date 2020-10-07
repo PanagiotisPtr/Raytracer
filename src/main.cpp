@@ -52,14 +52,14 @@ int main() {
 
     std::cout << (m == k) << std::endl;
 
-    drawing::Colour c1 = {1, 2, 3};
+    drawing::Colour c1 = {0.1, 0.2, 0.3};
     drawing::Colour c2 = {255,255,255};
 
     drawing::Canvas<1, 2> canv1;
     canv1[0][0] = c1;
     canv1[0][1] = c2;
 
-    canv1[0][1] = {255, 0, 0};
+    canv1[0][1] = {1.0, 1.5, 0.25};
 
     std::cout << c1 << std::endl;
 
@@ -67,6 +67,7 @@ int main() {
 
     std::cout << canv1 << std::endl;
 
+    canv1.save("someImage.ppm");
 
     return 0;
 }
