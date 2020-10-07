@@ -7,6 +7,7 @@
 
 #include "vector.h"
 #include "point.h"
+#include "matrix.h"
 
 namespace math {
 
@@ -164,6 +165,47 @@ public:
         });
     }
 
+    // Vector to matrix
+    template<typename T, std::size_t sz>
+    static Matrix<T, 1, sz> vectorToMatrix(const Vector<T, sz>& v) {
+        Matrix<T, 1, sz> rv;
+
+        for (std::size_t i = 0; i < sz; i++)
+            rv[0][i] = v[i];
+
+        return rv;
+    }
+
+    // Matrix multiplication
+    template<typename T, std::size_t M, std::size_t N, std::size_t P>
+    static Matrix<T, M, P> multiply(const Matrix<T, M, N>& m1, const Matrix<T, N, P>& m2) {
+        Matrix<T, M, P> rv;
+
+        for (std::size_t i = 0; i < M; i++) {
+            for (std::size_t j = 0; j < P; j++) {
+                rv[i][j] = 0;
+                for (std::size_t k = 0; k < N; k++) {
+                    rv[i][j] += m1[i][k] * m2[k][j];
+                }
+            }
+        }
+
+        return rv;
+    }
+
+    // Matrix transopose
+    template<typename T, std::size_t R, std::size_t C>
+    static Matrix<T, C, R> transpose(const Matrix<T, R, C>& m) {
+        Matrix<T, C, R> rv;
+        
+        for (std::size_t i = 0; i < R; i++) {
+            for (std::size_t j = 0; j < C; j++) {
+                rv[j][i] = m[i][j];
+            }
+        }
+
+        return rv;
+    }
 };
 
 } // namespace math
