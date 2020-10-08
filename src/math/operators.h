@@ -58,6 +58,11 @@ Vector<T, sz> operator*(T c, const Vector<T, sz>& v) {
     return Operations::multiply<T, sz>(v, c);
 }
 
+template<typename T, std::size_t R, std::size_t C, std::size_t P>
+Matrix<T, R, P> operator*(const Matrix<T, R, C>& m1, const Matrix<T, C, P>& m2) {
+    return Operations::multiply(m1, m2);
+}
+
 // division
 template<typename T, std::size_t sz>
 Point<T, sz> operator/(const Point<T, sz>& p, T c) {
