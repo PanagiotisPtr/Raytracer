@@ -188,17 +188,6 @@ TEST(operationTests, crossProduct3DTest) {
     EXPECT_EQ(expected, d);
 }
 
-TEST(operationTests, vectorToMatrixBaseCaseTest) {
-    math::Vector<float, 5> a = {1, 2, 3, 4, 5};
-    math::Matrix<float, 1, 5> m = math::Operations::vectorToMatrix(a);
-
-    EXPECT_EQ(1, a[0]);
-    EXPECT_EQ(2, a[1]);
-    EXPECT_EQ(3, a[2]);
-    EXPECT_EQ(4, a[3]);
-    EXPECT_EQ(5, a[4]);
-}
-
 TEST(operationTests, matrixMultiplicationBasecase) {
     math::Matrix<double, 3, 4> a = {
         {1.123, 4.32, 33.0, 9.0},

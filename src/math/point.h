@@ -19,9 +19,10 @@ public:
 
 template<typename T>
 class Point3D : public Point<T, 4> {
-    Point3D() : Point<T, 4>({0,0,0,1}) {}
+public:
+    Point3D() : Point<T, 4>({(T)0,(T)0,(T)0,(T)1}) {}
 
-    Point3D(T x, T y, T z) : Point<T, 4>({x,y,z,1}) {}
+    Point3D(T x, T y, T z) : Point<T, 4>({x,y,z,(T)1}) {}
 
     T& x() { return this->operator[](0); }
 
