@@ -229,7 +229,7 @@ public:
     static Matrix<T, S, S> inverse(const Matrix<T, S, S>& m) {
         const T d = determinant(m);
 
-        if (d == EQUALITY_DELTA) {
+        if (std::isnan(d) || std::abs(d) <= EQUALITY_DELTA) {
             throw MatrixNotInvertableException();
         }
 
