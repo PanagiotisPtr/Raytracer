@@ -90,9 +90,9 @@ TEST(operationTests, subtractionPointVectorTests) {
 }
 
 TEST(operationTests, scalarMultiplicationTest) {
-    math::Vector3D<float> a = {1.0f, -2.0f, 0.5f};
+    math::Vector<float, 3> a = {1.0f, -2.0f, 0.5f};
     float c = 43.242;
-    math::Vector3D<float> ac = a * c;
+    math::Vector<float, 3> ac = a * c;
 
     EXPECT_EQ(a[0] * c, ac[0]);
     EXPECT_EQ(a[1] * c, ac[1]);
@@ -100,9 +100,9 @@ TEST(operationTests, scalarMultiplicationTest) {
 }
 
 TEST(operationTests, scalarDivisionTest) {
-    math::Vector3D<float> a = {1.0f, -2.0f, 0.5f};
+    math::Vector<float, 3> a = {1.0f, -2.0f, 0.5f};
     float c = 43.242;
-    math::Vector3D<float> ac = a / c;
+    math::Vector<float, 3> ac = a / c;
 
     EXPECT_EQ(a[0] / c, ac[0]);
     EXPECT_EQ(a[1] / c, ac[1]);
@@ -110,21 +110,21 @@ TEST(operationTests, scalarDivisionTest) {
 }
 
 TEST(operationTests, magnitudeUnitTestOnX) {
-    math::Vector3D<float> a = {1.0f, 0.0f, 0.0f};
+    math::Vector<float, 3> a = {1.0f, 0.0f, 0.0f};
     float m = math::Operations::magnitude(a);
 
     EXPECT_EQ(1, m);
 }
 
 TEST(operationTests, magnitudeUnitTestOnY) {
-    math::Vector3D<float> a = {0.0f, 1.0f, 0.0f};
+    math::Vector<float, 3> a = {0.0f, 1.0f, 0.0f};
     float m = math::Operations::magnitude(a);
 
     EXPECT_EQ(1, m);
 }
 
 TEST(operationTests, magnitudeUnitTestOnZ) {
-    math::Vector3D<float> a = {0.0f, 0.0f, 1.0f};
+    math::Vector<float, 3> a = {0.0f, 0.0f, 1.0f};
     float m = math::Operations::magnitude(a);
 
     EXPECT_EQ(1, m);
@@ -178,8 +178,8 @@ TEST(operationTests, dotProductNegativeNumbersTest) {
 TEST(operationTests, crossProduct3DTest) {
     math::Vector<float, 3> a = {-2.5f, 4.0f, 5.32f};
     math::Vector<float, 3> b = {3.0f, -2.323f, 1.0f};
-    math::Vector3D<float> d = math::Operations::crossProduct3D(a, b);
-    math::Vector3D<float> expected = {
+    math::Vector<float, 3> d = math::Operations::crossProduct3D(a, b);
+    math::Vector<float, 3> expected = {
         (4.0f) * (1.0f) - (5.32f) * (-2.323f),
         (5.32f) * (3.0f) - (-2.5f) * (1.0f),
         (-2.5f) * (-2.323f) - (4.0f) * (3.0f)

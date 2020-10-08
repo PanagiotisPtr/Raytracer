@@ -13,15 +13,15 @@ namespace drawing {
 
 class Operations {
 public:
-    static math::Vector3D<double> colourToVector(const Colour& c) {
-        return math::Vector3D<double>({
+    static math::Vector<double, 3> colourToVector(const Colour& c) {
+        return math::Vector<double, 3>({
             c[0],
             c[1],
             c[2]
         });
     }
 
-    static Colour vectorToColour(const math::Vector3D<double>& v) {
+    static Colour vectorToColour(const math::Vector<double, 3>& v) {
         return Colour({
             v[0],
             v[1],
@@ -30,7 +30,7 @@ public:
     }
 
     static Colour add(const Colour& c1, const Colour& c2) {
-        math::Vector3D<double> rv = math::Operations::add(
+        math::Vector<double, 3> rv = math::Operations::add(
             colourToVector(c1),
             colourToVector(c2)
         );
@@ -39,7 +39,7 @@ public:
     }
 
     static Colour subtract(const Colour& c1, const Colour& c2) {
-        math::Vector3D<double> rv = math::Operations::subtract(
+        math::Vector<double, 3> rv = math::Operations::subtract(
             colourToVector(c1),
             colourToVector(c2)
         );

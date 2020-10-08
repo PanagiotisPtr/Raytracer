@@ -17,7 +17,7 @@ Vector<T, sz> operator+(const Vector<T, sz>& v, const Point<T, sz>& p) {
 }
 
 template<typename T, std::size_t sz>
-Vector<T, sz> operator+(const Point<T, sz>& p, const Vector<T, sz>& v) {
+Point<T, sz> operator+(const Point<T, sz>& p, const Vector<T, sz>& v) {
     return Operations::add(v, p);
 }
 

@@ -22,13 +22,6 @@ TEST(vectorTests, constructorSizeTest) {
     EXPECT_EQ(10, t.size());
 }
 
-TEST(vectorTests, vector3DConstructor) {
-    math::Vector3D<float> v3 = {1,2,3};
-    EXPECT_EQ(3, v3[2]);
-    EXPECT_EQ(2, v3[1]);
-    EXPECT_EQ(1, v3[0]);
-}
-
 TEST(vectorTests, constructorTypesTest) {
     EXPECT_EQ(typeid(float), typeid(math::Vector<float, 1>::value_type));
     EXPECT_EQ(typeid(int), typeid(math::Vector<int, 1>::value_type));

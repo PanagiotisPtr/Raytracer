@@ -57,9 +57,6 @@ public:
     }
 };
 
-template<typename T>
-using Vector3D = Vector<T, 3>;
-
 } // namespace math
 
 #endif

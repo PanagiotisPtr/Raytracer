@@ -149,7 +149,7 @@ public:
 
     // Cross product (only defined for 3 dimensions)
     template<typename T>
-    static Vector3D<T> crossProduct3D(const Vector3D<T>& v1, const Vector3D<T>& v2) {
+    static Vector<T, 3> crossProduct3D(const Vector<T, 3>& v1, const Vector<T, 3>& v2) {
         const T& x1 = v1[0];
         const T& y1 = v1[1];
         const T& z1 = v1[2];
@@ -158,7 +158,7 @@ public:
         const T& y2 = v2[1];
         const T& z2 = v2[2];
 
-        return Vector3D<T>({
+        return Vector<T, 3>({
             y1 * z2 - z1 * y2,
             z1 * x2 - x1 * z2,
             x1 * y2 - y1 * x2

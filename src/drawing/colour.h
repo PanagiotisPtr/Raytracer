@@ -8,11 +8,11 @@
 
 namespace drawing {
 
-class Colour : public math::Vector3D<double> {
+class Colour : public math::Vector<double, 3> {
 public:
-    Colour() : math::Vector3D<double>() {}
+    Colour() : math::Vector<double, 3>() {}
 
-    Colour(std::initializer_list<double> l) : math::Vector3D<double>(l) {}
+    Colour(std::initializer_list<double> l) : math::Vector<double, 3>(l) {}
 
     double red() const { return this->operator[](0); }
 
