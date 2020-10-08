@@ -17,6 +17,19 @@ public:
     Point(std::initializer_list<N> l) : Vector<T, S>(l) {}
 };
 
+template<typename T>
+class Point3D : public Point<T, 4> {
+    Point3D() : Point<T, 4>({0,0,0,1}) {}
+
+    Point3D(T x, T y, T z) : Point<T, 4>({x,y,z,1}) {}
+
+    T& x() { return this->operator[](0); }
+
+    T& y() { return this->operator[](1); }
+
+    T& z() { return this->operator[](2); }
+};
+
 } // namespace math
 
 #endif
