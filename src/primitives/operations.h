@@ -8,15 +8,16 @@
 #include "ray.h"
 #include "objects/sphere.h"
 #include "math/operations.h"
+#include "math/utility.h"
 
 namespace primitives {
 
 class Operations {
-
+public:
     // merge intersection containers
     // make sure the ray has the same origin
     // for the merge to be valid
-    IntersectionContainer mergeIntersectionContainers(
+    static IntersectionContainer mergeIntersectionContainers(
         IntersectionContainer c1,
         IntersectionContainer c2
     ) {
@@ -38,11 +39,29 @@ class Operations {
         return c3;
     }
 
-    IntersectionContainer getRsaySphereIntersections(Ray r, objects::Sphere* s) {
+    static Ray transformRay(const Ray& r, const primitives::TransformationMatrix& m) {
+        primitives::Vector3DMatrix originMatrix = math::Utility::pointToMatrix(r.getOrigin());
+        primitives::Vector3DMatrix directionMatrix = math::Utility::vectorToMatrix(r.getDirection());
+
+        primitives::Vector3DMatrix newOriginMatrix = m * originMatrix;
+        primitives::Vector3DMatrix newDirectionMatrix = m * directionMatrix;
+
+        primitives::Point3D newOrigin = math::Utility::matrixToPoint(newOriginMatrix);
+        primitives::Vector3D newDirection = math::Utility::matrixToVector(newDirectionMatrix);
+
+        return Ray(newOrigin, newDirection);
+    }
+
+    static IntersectionContainer getRsaySphereIntersections(const primitives::Ray ray, const objects::Sphere* s) {
         IntersectionContainer intersections;
 
+        primitives::Ray r = transformRay(
+            ray,
+            math::Operations::inverse(s->getTransformation())
+        );
+
         Vector3D sphereToRay = r.getOrigin() - s->getOrigin();
-        
+
         // solve quadratic formula
         PrecisionType a = math::Operations::dotProduct(r.getDirection(), r.getDirection());
         PrecisionType b = 2 * math::Operations::dotProduct(r.getDirection(), sphereToRay);

@@ -12,9 +12,9 @@ class Ray {
 public:
     Ray(Point3D o, Vector3D d) : origin(o), direction(d) {}
 
-    Point3D getOrigin() { return this->origin; }
+    Point3D getOrigin() const { return this->origin; }
 
-    Vector3D getDirection() { return this->direction; }
+    Vector3D getDirection() const { return this->direction; }
 
     Point3D getAtTime(PrecisionType t) {
         return this->origin + (this->direction * t);
@@ -23,7 +23,6 @@ public:
 private:
     Point3D origin;
     Vector3D direction;
-    IntersectionContainer intersections;
 };
 
 } // namespace primitives

@@ -15,6 +15,8 @@ public:
     void addTransformation(primitives::TransformationMatrix t) {
         this->transform = t * this->transform;
     }
+
+    primitives::TransformationMatrix getTransformation() const { return this->transform; }
 private:
     primitives::TransformationMatrix transform;
 };

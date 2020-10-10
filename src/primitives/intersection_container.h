@@ -5,15 +5,16 @@
 #include <cstddef>
 
 #include "intersection.h"
+#include "exceptions.h"
 
 namespace primitives {
 
 struct IntersectionContainer {
     // intersections in front of ray
-    std::set<Intersection> front;
+    std::set<Intersection, IntersectionCompare> front;
 
     // intersections behind of ray
-    std::set<Intersection> back;
+    std::set<Intersection, IntersectionCompare> back;
 
     void addIntersection(Intersection i) {
         if (i.time >= 0) {
@@ -27,7 +28,14 @@ struct IntersectionContainer {
         return front.size() + back.size();
     }
 
-    Intersection getFirst() { return *begin(front); }
+    // throw exception if front is empty
+    Intersection getFirst() const {
+        if (front.size() == 0) {
+            throw NoIntersectionsException();
+        }
+
+        return *std::begin(front);
+    }
 };
 
 } // namespace primitives
