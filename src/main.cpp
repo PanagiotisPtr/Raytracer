@@ -5,69 +5,62 @@
 #include "math/matrix.h"
 #include "math/operations.h"
 #include "math/operators.h"
+#include "math/transformations.h"
+
 #include "drawing/colour.h"
 #include "drawing/canvas.h"
 
+#include "primitives/constants.h"
+#include "primitives/ray.h"
+#include "primitives/operations.h"
+
+#include "objects/sphere.h"
+
+#define IMAGE_SIZE_X 1080
+#define IMAGE_SIZE_Y 1080
+
 int main() {
-    math::Point<float, 5> p = { 1, 2, 3, 4, 5 };
+    primitives::Point3D cameraOrigin = {0,0,-2,1};
+    auto canvas = (drawing::Canvas<IMAGE_SIZE_X, IMAGE_SIZE_Y>*)
+        malloc(sizeof(drawing::Canvas<IMAGE_SIZE_X, IMAGE_SIZE_Y>));
+    primitives::PrecisionType aspectRatio =
+        (primitives::PrecisionType)IMAGE_SIZE_X/(primitives::PrecisionType)IMAGE_SIZE_Y;
+    primitives::PrecisionType canvasSizeX = 10 * aspectRatio;
+    primitives::PrecisionType canvasSizeY = 10;
+    primitives::PrecisionType canvasWidth = IMAGE_SIZE_X;
+    primitives::PrecisionType canvasHeight = IMAGE_SIZE_Y;
+    objects::Sphere s({0,0,0,1});
 
-    std::cout << p << std::endl;
+    s.addTransformation(
+        math::Transformations::scale<primitives::PrecisionType>(1.5,1.5,1.5)
+    );
+    
+    for (std::size_t i = 0; i < IMAGE_SIZE_X; i++) {
+        for (std::size_t j = 0; j < IMAGE_SIZE_Y; j++) {
+            primitives::PrecisionType x =
+                (primitives::PrecisionType)j * canvasSizeX/canvasWidth - canvasSizeX/2;
+            primitives::PrecisionType y =
+                canvasSizeY/2 - (primitives::PrecisionType)i * canvasSizeY/canvasHeight;
+            primitives::Point3D pointOnCanvas;
+            pointOnCanvas[0] = x;
+            pointOnCanvas[1] = y;
 
-    math::Vector<float, 5> v = { 4, 5, 6, 7, 8};
-    for (std::size_t i = 0; i < v.size(); i++) {break;
-        v[i] = i+1;
+            primitives::Vector3D rayDirection =
+                math::Operations::normalise(pointOnCanvas - cameraOrigin);
+
+            primitives::Ray r(cameraOrigin, rayDirection);
+
+            primitives::IntersectionContainer intersections =
+                primitives::Operations::getRsaySphereIntersections(r, &s);
+            if (intersections.front.size() > 0) {
+                (*canvas)[i][j] = drawing::Colour({1,1,1});
+            } else {
+                (*canvas)[i][j] = drawing::Colour({0,0,0});
+            }
+        }
     }
 
-    std::cout << v << std::endl;
-
-    math::Matrix<float, 3, 3> m = {
-        {1,2,3},
-        {4,5,6},
-        {7,8,9}
-    };
-
-    math::Matrix<float, 3, 3> k = {
-        {1.00001f, 2.00001f, 3.00001f},
-        {4.00001f, 5.00001f, 6.00001f},
-        {7.00001f, 8.00001f, 9.00001f}
-    };
-
-    std::cout << m << std::endl;
-
-    auto vp = math::Operations::add(v, p);
-
-    std::cout << vp << std::endl;
-
-    auto vv = v + v;
-
-    auto qq = math::Operations::multiply<float, 5>(vv, 10);
-
-    std::cout << vv << std::endl;
-
-    std::cout << qq/5.0f << std::endl;
-
-    std::cout << (vv == ((qq/5.0f)/2.0f)) << std::endl;
-
-    std::cout << (p == p) << std::endl;
-
-    std::cout << (m == k) << std::endl;
-
-    drawing::Colour c1 = {0.1, 0.2, 0.3};
-    drawing::Colour c2 = {255,255,255};
-
-    drawing::Canvas<1, 2> canv1;
-    canv1[0][0] = c1;
-    canv1[0][1] = c2;
-
-    canv1[0][1] = {1.0, 1.5, 0.25};
-
-    std::cout << c1 << std::endl;
-
-    std::cout << c2 << std::endl;
-
-    std::cout << canv1 << std::endl;
-
-    canv1.save("someImage.ppm");
+    canvas->save("render_3_1080x1080.ppm");
 
     return 0;
 }

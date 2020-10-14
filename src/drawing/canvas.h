@@ -20,6 +20,10 @@ class Canvas : public ColourMatrix<Width, Height> {
 public:
     Canvas() : ColourMatrix<Width, Height>() {}
 
+    std::size_t getHeight() const { return Height; }
+    
+    std::size_t getWidth() const { return Width; }
+
     void save(const std::string& filename) {
         std::ofstream fout(filename);
 
