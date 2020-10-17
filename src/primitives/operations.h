@@ -6,9 +6,13 @@
 #include "intersection.h"
 #include "intersection_container.h"
 #include "ray.h"
+#include "base_material.h"
 #include "objects/sphere.h"
+#include "objects/light.h"
 #include "math/operations.h"
 #include "math/utility.h"
+#include "drawing/operations.h"
+#include "drawing/operators.h"
 
 namespace primitives {
 
@@ -80,6 +84,54 @@ public:
         intersections.addIntersection(Intersection(t2, s));
 
         return intersections;
+    }
+
+    static Vector3D getSphereNormalAtPoint(const objects::Sphere& s, const Point3D& p) {
+        Point3D local = math::Utility::matrixToPoint(
+            math::Operations::inverse(s.getTransformation()) * math::Utility::pointToMatrix(p)
+        );
+        Vector3D localNormal = local - Point3D({0,0,0,1});
+        Vector3D worldNormal = math::Utility::matrixToVector(
+            math::Operations::transpose(math::Operations::inverse(s.getTransformation()))
+            * math::Utility::vectorToMatrix(localNormal)
+        );
+        worldNormal[3] = 0;
+
+        return math::Operations::normalise(worldNormal);
+    }
+
+    static Vector3D getReflection(const Vector3D& v, const Vector3D& normal) {
+        return v - (normal * (math::Operations::dotProduct(v, normal) * 2));
+    }
+
+    static drawing::Colour getColourOnSphere(
+        const primitives::BaseMaterial& material,
+        const objects::Light& light,
+        const Point3D& intersection,
+        const Vector3D& incoming,
+        const Vector3D& normal
+    ) {
+        drawing::Colour baseColour = material.colour * light.getIntensity();
+        Vector3D lightVector = math::Operations::normalise(light.getOrigin() - intersection);
+        drawing::Colour ambient = baseColour * material.ambient;
+
+        drawing::Colour diffuse = {0,0,0};
+        drawing::Colour specular = {0,0,0};
+
+        // check if light hits sphere
+        primitives::PrecisionType test = math::Operations::dotProduct(lightVector, normal);
+        if (test >= 0) {
+            diffuse = baseColour * material.diffuse * test;
+
+            Vector3D reflectVector = primitives::Operations::getReflection(Vector3D({0,0,0,0})-lightVector, normal);
+            primitives::PrecisionType reflectionDot = math::Operations::dotProduct(reflectVector, incoming);
+            if (reflectionDot > 0) {
+                primitives::PrecisionType factor = std::pow(reflectionDot, material.shininess);
+                specular = light.getIntensity() * (material.specular * factor);
+            }
+        }
+
+        return ambient + diffuse + specular;
     }
 };
 
