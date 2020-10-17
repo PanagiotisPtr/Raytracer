@@ -15,24 +15,42 @@
 #include "primitives/operations.h"
 
 #include "objects/sphere.h"
+#include "objects/light.h"
 
 #define IMAGE_SIZE_X 1080
 #define IMAGE_SIZE_Y 1080
 
 int main() {
-    primitives::Point3D cameraOrigin = {0,0,-2,1};
+    primitives::Point3D cameraOrigin = {0,0,-4,1};
     auto canvas = (drawing::Canvas<IMAGE_SIZE_X, IMAGE_SIZE_Y>*)
         malloc(sizeof(drawing::Canvas<IMAGE_SIZE_X, IMAGE_SIZE_Y>));
     primitives::PrecisionType aspectRatio =
         (primitives::PrecisionType)IMAGE_SIZE_X/(primitives::PrecisionType)IMAGE_SIZE_Y;
     primitives::PrecisionType canvasSizeX = 10 * aspectRatio;
     primitives::PrecisionType canvasSizeY = 10;
+    primitives::PrecisionType canvasZPosition = 10.0;
     primitives::PrecisionType canvasWidth = IMAGE_SIZE_X;
     primitives::PrecisionType canvasHeight = IMAGE_SIZE_Y;
     objects::Sphere s({0,0,0,1});
+    s.setMaterial(primitives::BaseMaterial(
+        drawing::Colour({0.4, 1.0, 0.4}),
+        1,
+        0.9,
+        0.9,
+        200.0
+    ));
 
     s.addTransformation(
-        math::Transformations::scale<primitives::PrecisionType>(1.5,1.5,1.5)
+        math::Transformations::translate<primitives::PrecisionType>(0.5,0.0,0.0)
+    );
+
+    s.addTransformation(
+        math::Transformations::scale<primitives::PrecisionType>(1.0,0.6,1.0)
+    );
+
+    objects::Light l(
+        drawing::Colour({1.0,1.0,1.0}),
+        primitives::Point3D({-10,10,-10,1})
     );
     
     for (std::size_t i = 0; i < IMAGE_SIZE_X; i++) {
@@ -44,6 +62,7 @@ int main() {
             primitives::Point3D pointOnCanvas;
             pointOnCanvas[0] = x;
             pointOnCanvas[1] = y;
+            pointOnCanvas[2] = canvasZPosition;
 
             primitives::Vector3D rayDirection =
                 math::Operations::normalise(pointOnCanvas - cameraOrigin);
@@ -53,14 +72,26 @@ int main() {
             primitives::IntersectionContainer intersections =
                 primitives::Operations::getRsaySphereIntersections(r, &s);
             if (intersections.front.size() > 0) {
-                (*canvas)[i][j] = drawing::Colour({1,1,1});
+                primitives::Intersection first = intersections.getFirst();
+                primitives::Point3D point = r.getAtTime(first.time);
+                primitives::Vector3D normal = primitives::Operations::getSphereNormalAtPoint(s, point);
+                primitives::Vector3D in = primitives::Vector3D({0,0,0,0}) - rayDirection;
+                drawing::Colour finalColour = primitives::Operations::getColourOnSphere(
+                    s.getMaterial(),
+                    l,
+                    point,
+                    in,
+                    normal
+                );
+
+                (*canvas)[i][j] = finalColour;
             } else {
                 (*canvas)[i][j] = drawing::Colour({0,0,0});
             }
         }
     }
 
-    canvas->save("render_3_1080x1080.ppm");
+    canvas->save("render_3_1080x1080_new.ppm");
 
     return 0;
 }
