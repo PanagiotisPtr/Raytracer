@@ -240,3 +240,53 @@ TEST(intersectionOperationsTests, raySphereMovedAndScaledSphere) {
     EXPECT_DOUBLE_EQ(0, first.time);
     EXPECT_DOUBLE_EQ(4, second.time);
 }
+
+TEST(normalsOperationsTests, getSphereNormalOnX) {
+    objects::Sphere s({0,0,0,1});
+    primitives::Vector3D normal = primitives::Operations::getSphereNormalAtPoint(s, {1,0,0,1});
+
+    EXPECT_EQ(primitives::Vector3D({1,0,0,0}), normal);
+}
+
+TEST(normalsOperationsTests, getSphereNormalOnY) {
+    objects::Sphere s({0,0,0,1});
+    primitives::Vector3D normal = primitives::Operations::getSphereNormalAtPoint(s, {0,1,0,1});
+
+    EXPECT_EQ(primitives::Vector3D({0,1,0,0}), normal);
+}
+
+TEST(normalsOperationsTests, getSphereNormalOnZ) {
+    objects::Sphere s({0,0,0,1});
+    primitives::Vector3D normal = primitives::Operations::getSphereNormalAtPoint(s, {0,0,1,1});
+
+    EXPECT_EQ(primitives::Vector3D({0,0,1,0}), normal);
+}
+
+TEST(reflectionOperationsTests, getReflectionBaseCase) {
+    primitives::Vector3D v({1, 1, 0, 0});
+    primitives::Vector3D n({1, 0, 0, 0});
+    primitives::Vector3D reflection = primitives::Operations::getReflection(v, n);
+
+    EXPECT_EQ(primitives::Vector3D({-1, 1, 0, 0}), reflection);
+}
+
+TEST(reflectionOperationsTests, getReflectionDiagonalNormal) {
+    primitives::Vector3D v({0.412, 1.421, 3.22, 0.0});
+    primitives::Vector3D n({2.0, 2.11, 0.423, 0.0});
+    primitives::Vector3D reflection = primitives::Operations::getReflection(v, n);
+    primitives::Vector3D expected = {-20.32548, -20.4570414, -1.1659770199999997, 0.0};
+
+    EXPECT_EQ(expected, reflection);
+}
+
+TEST(reflectionOperationsTests, reflectionHasSameMagnitude) {
+    primitives::Vector3D v({0.412, 1.421, 3.22, 0.0});
+    primitives::Vector3D n({2.0, 2.11, 0.423, 0.0});
+    primitives::Vector3D reflection = primitives::Operations::getReflection(v, n);
+    primitives::Vector3D expected = {-20.32548, -20.4570414, -1.1659770199999997, 0.0};
+
+    EXPECT_DOUBLE_EQ(
+        math::Operations::magnitude(expected),
+        math::Operations::magnitude(reflection)
+    );
+}
