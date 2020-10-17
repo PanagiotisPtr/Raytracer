@@ -32,11 +32,6 @@ Colour operator/(const Colour& c, T s) {
     return Operations::divide(s, c);
 }
 
-template<typename T>
-Colour operator/(const Colour& c, T s) {
-    return Operations::divide(s, c);
-}
-
 } // namespace drawing
 
 #endif

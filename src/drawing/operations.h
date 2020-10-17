@@ -58,9 +58,9 @@ public:
     template<typename T>
     static Colour multiply(T s, const Colour& c) {
         return Colour({
-            c1[0] * s,
-            c1[1] * s,
-            c1[2] * s
+            c[0] * (double)s,
+            c[1] * (double)s,
+            c[2] * (double)s
         });
     }
 
