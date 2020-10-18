@@ -15,14 +15,20 @@ jobs:
           name: install wget
           command: 'apt-get update && sudo apt-get install -y wget'
       - run:
+          name: install make
+          command: 'apt-get update && sudo apt-get install -y make'
+      - run:
           name: download cmake 3.19
-          command: 'wget "https://github.com/Kitware/CMake/releases/download/v3.19.0-rc1/cmake-3.19.0-rc1-Linux-x86_64.sh"'
+          command: 'cd / && wget "https://github.com/Kitware/CMake/releases/download/v3.19.0-rc1/cmake-3.19.0-rc1-Linux-x86_64.sh"'
       - run:
           name: install cmake 3.19
-          command: 'chmod +x cmake-3.19.0-rc1-Linux-x86_64.sh && ./cmake-3.19.0-rc1-Linux-x86_64.sh --skip-license'
+          command: 'cd / && chmod +x cmake-3.19.0-rc1-Linux-x86_64.sh && ./cmake-3.19.0-rc1-Linux-x86_64.sh --skip-license'
       - run:
           name: install git
           command: 'apt-get update && sudo apt-get install -y git'
+      - run:
+          name: go to project folder
+          command: 'cd /root/project'
       - checkout
       - run:
           name: initialising submodules

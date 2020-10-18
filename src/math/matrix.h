@@ -61,16 +61,6 @@ public:
         return rv;
     }
 
-    template<typename N, std::size_t S1, std::size_t S2>
-    friend std::ostream& operator<<(std::ostream& out, const Matrix<N, S1, S2>& m) {
-        out << "[ ";
-        for (const Vector<N, S2>& value : m)
-            out << value << ", ";
-        out << "]";
-
-        return out;
-    }
-
     bool operator==(const Matrix<T, R, C>& m) const {
         for (std::size_t i = 0; i < R; i++)
             if (m[i] != this->operator[](i))
@@ -83,6 +73,16 @@ public:
         return !((*this) == m);
     }
 };
+
+template<typename N, std::size_t S1, std::size_t S2>
+std::ostream& operator<<(std::ostream& out, const Matrix<N, S1, S2>& m) {
+    out << "[ ";
+    for (const Vector<N, S2>& value : m)
+        out << value << ", ";
+    out << "]";
+
+    return out;
+}
 
 } // namespace math
 

@@ -29,16 +29,6 @@ public:
             this->operator[](i++) = value;
     }
 
-    template<typename N, std::size_t sz>
-    friend std::ostream& operator<<(std::ostream& out, const Vector<N, sz>& v) {
-        out << "[ ";
-        for (const N& value : v)
-            out << value << ", ";
-        out << "]";
-
-        return out;
-    }
-
     bool operator==(const Vector<T, S>& v) const {
         for (std::size_t i = 0; i < S; i++) {
             const T& a = v[i];
@@ -56,6 +46,16 @@ public:
         return !((*this) == v);
     }
 };
+
+template<typename N, std::size_t sz>
+std::ostream& operator<<(std::ostream& out, const Vector<N, sz>& v) {
+    out << "[ ";
+    for (const N& value : v)
+        out << value << ", ";
+    out << "]";
+
+    return out;
+}
 
 } // namespace math
 
