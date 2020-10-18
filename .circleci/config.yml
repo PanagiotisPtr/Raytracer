@@ -5,7 +5,6 @@ jobs:
     docker:
       - image: "debian:stretch"
     steps:
-      - checkout
       - run:
           name: install sudo
           command: 'apt-get update && apt-get install -y sudo && rm -rf /var/lib/apt/lists/*'
@@ -13,11 +12,18 @@ jobs:
           name: install gcc and g++ compilers
           command: 'apt-get update && apt-get install -y gcc g++'
       - run:
-          name: install cmake
-          command: 'apt-get update && sudo apt-get install -y cmake'
+          name: install wget
+          command: 'apt-get update && sudo apt-get install -y wget'
+      - run:
+          name: download cmake 3.19
+          command: 'wget "https://github.com/Kitware/CMake/releases/download/v3.19.0-rc1/cmake-3.19.0-rc1-Linux-x86_64.sh"'
+      - run:
+          name: install cmake 3.19
+          command: 'chmod +x cmake-3.19.0-rc1-Linux-x86_64.sh && ./cmake-3.19.0-rc1-Linux-x86_64.sh --skip-license'
       - run:
           name: install git
           command: 'apt-get update && sudo apt-get install -y git'
+      - checkout
       - run:
           name: initialising submodules
           command: 'git submodule init && git submodule update --remote'

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.10)
 project(raytracer)
 
 if(NOT CMAKE_BUILD_TYPE)
