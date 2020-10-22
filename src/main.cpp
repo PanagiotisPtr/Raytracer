@@ -17,6 +17,9 @@
 #include "objects/sphere.h"
 #include "objects/light.h"
 
+#include "world/world.h"
+#include "world/operations.h"
+
 #define IMAGE_SIZE_X 1080
 #define IMAGE_SIZE_Y 1080
 
@@ -52,6 +55,10 @@ int main() {
         drawing::Colour({1.0,1.0,1.0}),
         primitives::Point3D({-10,10,-10,1})
     );
+
+    world::World w;
+    w.addObject(s);
+    w.addObject(l);
     
     for (std::size_t i = 0; i < IMAGE_SIZE_X; i++) {
         for (std::size_t j = 0; j < IMAGE_SIZE_Y; j++) {
@@ -69,29 +76,11 @@ int main() {
 
             primitives::Ray r(cameraOrigin, rayDirection);
 
-            primitives::IntersectionContainer intersections =
-                primitives::Operations::getRsaySphereIntersections(r, &s);
-            if (intersections.front.size() > 0) {
-                primitives::Intersection first = intersections.getFirst();
-                primitives::Point3D point = r.getAtTime(first.time);
-                primitives::Vector3D normal = primitives::Operations::getSphereNormalAtPoint(s, point);
-                primitives::Vector3D in = primitives::Vector3D({0,0,0,0}) - rayDirection;
-                drawing::Colour finalColour = primitives::Operations::getColourOnSphere(
-                    s.getMaterial(),
-                    l,
-                    point,
-                    in,
-                    normal
-                );
-
-                (*canvas)[i][j] = finalColour;
-            } else {
-                (*canvas)[i][j] = drawing::Colour({0,0,0});
-            }
+            (*canvas)[i][j] = world::Operations::colorAtIntersection(w, r);
         }
     }
 
-    canvas->save("render_3_1080x1080_new.ppm");
+    canvas->save("new_render_3_1080x1080_new.ppm");
 
     return 0;
 }

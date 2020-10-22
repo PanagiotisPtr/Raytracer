@@ -86,7 +86,7 @@ public:
         return intersections;
     }
 
-    static Vector3D getSphereNormalAtPoint(const objects::Sphere& s, const Point3D& p) {
+    static Vector3D getSphereNormalAtPoint(const objects::Object& s, const Point3D& p) {
         Point3D local = math::Utility::matrixToPoint(
             math::Operations::inverse(s.getTransformation()) * math::Utility::pointToMatrix(p)
         );

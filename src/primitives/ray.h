@@ -16,7 +16,7 @@ public:
 
     Vector3D getDirection() const { return this->direction; }
 
-    Point3D getAtTime(PrecisionType t) {
+    Point3D getAtTime(PrecisionType t) const {
         return this->origin + (this->direction * t);
     }
 

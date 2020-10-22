@@ -3,8 +3,6 @@
 
 #include "object.h"
 #include "primitives/constants.h"
-#include "primitives/material.h"
-#include "primitives/base_material.h"
 
 namespace objects {
 
@@ -16,13 +14,8 @@ public:
     : origin(o) {}
 
     primitives::Point3D getOrigin() const { return this->origin; }
-
-    primitives::BaseMaterial getMaterial() const { return this->material; }
-
-    void setMaterial(primitives::BaseMaterial m) { this->material = m; }
 private:
     primitives::Point3D origin;
-    primitives::BaseMaterial material;
 };
 
 } // namespace objects

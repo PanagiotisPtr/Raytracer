@@ -2,6 +2,8 @@
 #define OBJECTS_OBJECT_H
 
 #include "primitives/constants.h"
+#include "primitives/material.h"
+#include "primitives/base_material.h"
 #include "math/matrix.h"
 #include "math/operators.h"
 
@@ -17,8 +19,13 @@ public:
     }
 
     primitives::TransformationMatrix getTransformation() const { return this->transform; }
-private:
+
+    primitives::BaseMaterial getMaterial() const { return this->material; }
+
+    void setMaterial(primitives::BaseMaterial m) { this->material = m; }
+protected:
     primitives::TransformationMatrix transform;
+    primitives::BaseMaterial material;
 };
 
 } // namespace objects
