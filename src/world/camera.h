@@ -42,7 +42,7 @@ public:
     primitives::PrecisionType getFrameWidth() const { return this->frameWidth; }
 
     primitives::PrecisionType getFielfOfView() const { return this->fieldOfView; }
-    
+
     primitives::TransformationMatrix getTransformation() const { return this->transform; }
 private:
     primitives::PrecisionType frameHeight;
