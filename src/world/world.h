@@ -3,11 +3,11 @@
 
 #include <vector>
 
-#include "../objects/sphere.h"
-#include "../objects/light.h"
-#include "../primitives/ray.h"
-#include "../primitives/operations.h"
-#include "../primitives/intersection_container.h"
+#include "objects/sphere.h"
+#include "objects/light.h"
+#include "primitives/ray.h"
+#include "primitives/operations.h"
+#include "primitives/intersection_container.h"
 
 namespace world {
 
@@ -36,6 +36,9 @@ public:
     }
 
     const std::vector<objects::Light> getLights() const { return this->lights; }
+
+    // currently only works with spheres
+    const std::vector<objects::Sphere> getObjects() const { return this->objects; }
 private:
     std::vector<objects::Sphere> objects;
     std::vector<objects::Light> lights;
