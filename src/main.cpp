@@ -18,22 +18,13 @@
 #include "objects/light.h"
 
 #include "world/world.h"
+#include "world/camera.h"
 #include "world/operations.h"
 
 #define IMAGE_SIZE_X 1080
 #define IMAGE_SIZE_Y 1080
 
 int main() {
-    primitives::Point3D cameraOrigin = {0,0,-4,1};
-    auto canvas = (drawing::Canvas<IMAGE_SIZE_X, IMAGE_SIZE_Y>*)
-        malloc(sizeof(drawing::Canvas<IMAGE_SIZE_X, IMAGE_SIZE_Y>));
-    primitives::PrecisionType aspectRatio =
-        (primitives::PrecisionType)IMAGE_SIZE_X/(primitives::PrecisionType)IMAGE_SIZE_Y;
-    primitives::PrecisionType canvasSizeX = 10 * aspectRatio;
-    primitives::PrecisionType canvasSizeY = 10;
-    primitives::PrecisionType canvasZPosition = 10.0;
-    primitives::PrecisionType canvasWidth = IMAGE_SIZE_X;
-    primitives::PrecisionType canvasHeight = IMAGE_SIZE_Y;
     objects::Sphere s({0,0,0,1});
     s.setMaterial(primitives::BaseMaterial(
         drawing::Colour({0.4, 1.0, 0.4}),
@@ -59,28 +50,14 @@ int main() {
     world::World w;
     w.addObject(s);
     w.addObject(l);
-    
-    for (std::size_t i = 0; i < IMAGE_SIZE_X; i++) {
-        for (std::size_t j = 0; j < IMAGE_SIZE_Y; j++) {
-            primitives::PrecisionType x =
-                (primitives::PrecisionType)j * canvasSizeX/canvasWidth - canvasSizeX/2;
-            primitives::PrecisionType y =
-                canvasSizeY/2 - (primitives::PrecisionType)i * canvasSizeY/canvasHeight;
-            primitives::Point3D pointOnCanvas;
-            pointOnCanvas[0] = x;
-            pointOnCanvas[1] = y;
-            pointOnCanvas[2] = canvasZPosition;
 
-            primitives::Vector3D rayDirection =
-                math::Operations::normalise(pointOnCanvas - cameraOrigin);
-
-            primitives::Ray r(cameraOrigin, rayDirection);
-
-            (*canvas)[i][j] = world::Operations::colorAtIntersection(w, r);
-        }
-    }
-
-    canvas->save("new_render_3_1080x1080_new.ppm");
+    world::Camera<200, 100> camera(M_PI/3);
+    camera.setTransformation(world::Operations::calculateCameraTransformation(
+        primitives::Point3D({0,0,-4,1}),
+        primitives::Point3D({0,0,0,1}),
+        primitives::Vector3D({0,1,0,1})
+    ));
+    (camera.render(w)).save("render.ppm");
 
     return 0;
 }
