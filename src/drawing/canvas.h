@@ -13,7 +13,7 @@
 namespace drawing {
 
 template<std::size_t Width, std::size_t Height>
-using ColourMatrix = math::Matrix<Colour, Width, Height>;
+using ColourMatrix = math::Matrix<Colour, Height, Width>;
 
 template<std::size_t Width, std::size_t Height>
 class Canvas : public ColourMatrix<Width, Height> {
@@ -31,8 +31,8 @@ public:
         fout << Width << " " << Height << '\n';
         fout << 255 << '\n';
 
-        for (std::size_t i = 0; i < Width; i++) {
-            for (std::size_t j = 0; j < Height; j++) {
+        for (std::size_t i = 0; i < Height; i++) {
+            for (std::size_t j = 0; j < Width; j++) {
                 // clamp colours to range (0, 255)
                 Colour pixel = this->operator[](i)[j];
                 int red = std::min(std::max(0.0, pixel.red()) * 255, 255.0);
