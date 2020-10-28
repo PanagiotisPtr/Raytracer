@@ -8,11 +8,11 @@
 
 namespace drawing {
 
-class Colour : public math::Vector<double, 3> {
+class Colour {
 public:
-    Colour() : math::Vector<double, 3>() {}
+    Colour() : data() {}
 
-    Colour(std::initializer_list<double> l) : math::Vector<double, 3>(l) {}
+    Colour(std::initializer_list<double> l) : data(l) {}
 
     double red() const { return this->operator[](0); }
 
@@ -20,6 +20,11 @@ public:
 
     double blue() const { return this->operator[](2); }
 
+    double& operator[](std::size_t idx) { return this->data[idx]; }
+
+    const double& operator[](std::size_t idx) const { return this->data[idx]; }
+private:
+    math::Vector<double, 3> data;
 };
 
 } // namespace drawing
