@@ -12,7 +12,6 @@
 #include "math/operations.h"
 #include "math/utility.h"
 #include "drawing/operations.h"
-#include "drawing/operators.h"
 
 namespace primitives {
 
@@ -111,9 +110,9 @@ public:
         const Vector3D& incoming,
         const Vector3D& normal
     ) {
-        drawing::Colour baseColour = material.colour * light.getIntensity();
+        drawing::Colour baseColour = drawing::Operations::multiply(material.colour, light.getIntensity());
         Vector3D lightVector = math::Operations::normalise(light.getOrigin() - intersection);
-        drawing::Colour ambient = baseColour * material.ambient;
+        drawing::Colour ambient = drawing::Operations::multiply(baseColour, material.ambient);
 
         drawing::Colour diffuse = {0,0,0};
         drawing::Colour specular = {0,0,0};
@@ -121,17 +120,17 @@ public:
         // check if light hits sphere
         primitives::PrecisionType test = math::Operations::dotProduct(lightVector, normal);
         if (test >= 0) {
-            diffuse = baseColour * material.diffuse * test;
+            diffuse = drawing::Operations::multiply(drawing::Operations::multiply(baseColour, material.diffuse), test);
 
             Vector3D reflectVector = primitives::Operations::getReflection(Vector3D({0,0,0,0})-lightVector, normal);
             primitives::PrecisionType reflectionDot = math::Operations::dotProduct(reflectVector, incoming);
             if (reflectionDot > 0) {
                 primitives::PrecisionType factor = std::pow(reflectionDot, material.shininess);
-                specular = light.getIntensity() * (material.specular * factor);
+                specular = drawing::Operations::multiply(light.getIntensity(), (material.specular * factor));
             }
         }
 
-        return ambient + diffuse + specular;
+        return drawing::Operations::add(drawing::Operations::add(ambient, diffuse), specular);
     }
 };
 
