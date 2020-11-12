@@ -1,4 +1,5 @@
 build/
+test-coverage/
 .vscode/
 .DS_Store
 *.ppm
