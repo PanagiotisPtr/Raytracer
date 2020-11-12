@@ -69,7 +69,7 @@ int main() {
     w.addObject(l);
     w.addObject(floor);
 
-    world::Camera<1280, 720> camera(M_PI/3);
+    world::Camera<300, 200> camera(M_PI/3);
     camera.setTransformation(world::Operations::calculateCameraTransformation(
         primitives::Point3D({0,0,-4,1}),
         primitives::Point3D({0,0,0,1}),
