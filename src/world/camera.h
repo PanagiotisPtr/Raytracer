@@ -75,14 +75,14 @@ public:
         return primitives::Ray(origin, direction);
     }
 
-    drawing::Canvas<Width, Height> render(const World& w) {
-        drawing::Canvas<Width, Height> image;
+    drawing::Canvas<Width, Height>* render(const World& w) {
+        auto image = new drawing::Canvas<Width, Height>();
 
         for (std::size_t y = 0; y < Height; y++) {
             for (std::size_t x = 0; x < Width; x++) {
                 primitives::Ray r = this->getRayForPosition(x, y);
                 drawing::Colour c = Operations::colorAtIntersection(w, r);
-                image[y][x] = c;
+                (*image)[y][x] = c;
             }
         }
 

@@ -47,17 +47,38 @@ int main() {
         primitives::Point3D({-10,10,-10,1})
     );
 
+    objects::Sphere floor({0,0,0,1});
+    floor.setMaterial(primitives::BaseMaterial(
+        drawing::Colour({0.333, 0.333, 0.333}),
+        1,
+        0.9,
+        0.9,
+        200.0
+    ));
+
+    floor.addTransformation(
+        math::Transformations::scale<primitives::PrecisionType>(10.0, 0.01, 10.0)
+    );
+
+    floor.addTransformation(
+        math::Transformations::translate<primitives::PrecisionType>(0.0,-0.6,0.0)
+    );
+
     world::World w;
     w.addObject(s);
     w.addObject(l);
+    w.addObject(floor);
 
-    world::Camera<200, 100> camera(M_PI/3);
+    world::Camera<1280, 720> camera(M_PI/3);
     camera.setTransformation(world::Operations::calculateCameraTransformation(
         primitives::Point3D({0,0,-4,1}),
         primitives::Point3D({0,0,0,1}),
         primitives::Vector3D({0,1,0,1})
     ));
-    (camera.render(w)).save("render.ppm");
+    auto image = camera.render(w);
+    image->save("render.ppm");
+
+    delete image;
 
     return 0;
 }
