@@ -11,6 +11,7 @@
 #include "objects/light.h"
 #include "math/operations.h"
 #include "math/transformations.h"
+#include "math/constants.h"
 #include "world.h"
 
 namespace world {
@@ -30,13 +31,14 @@ public:
                 primitives::Vector3D in = primitives::Vector3D({0,0,0,0}) - rayDirection;
                 primitives::Vector3D normal = primitives::Operations::getSphereNormalAtPoint(object, p);
                 bool inside = math::Operations::dotProduct(normal, in) < 0 ? true : false;
+                bool inShadow = Operations::shadowed(p, l, w);
 
                 if (inside) {
                     normal = primitives::Vector3D({0,0,0,0}) - normal;
                 }
 
                 drawing::Colour colour =
-                    primitives::Operations::getColourOnSphere(object.getMaterial(), l, p, in, normal);
+                    primitives::Operations::getColourOnSphere(object.getMaterial(), l, p, in, normal, inShadow);
 
                 finalColour = drawing::Operations::add(finalColour, colour);
             }
@@ -95,6 +97,27 @@ public:
         t[2] = primitives::Vector3D({0,0,0,0}) - front;
 
         return t * math::Transformations::translate(-position[0], -position[1], -position[2]);
+    }
+private:
+    static bool shadowed(const primitives::Point3D& p, const objects::Light& l, const World& w) {
+        primitives::Vector3D v = l.getOrigin() - p;
+        primitives::PrecisionType distanceToLight = math::Operations::magnitude(v);
+        v = math::Operations::normalise(v);
+        primitives::Point3D movedP = p + (v * (primitives::PrecisionType)math::EQUALITY_DELTA);
+
+        primitives::Ray r(movedP, v);
+        primitives::IntersectionContainer c = w.getIntersections(r);
+
+        try {
+            primitives::Intersection first = c.getFirst();
+            if (first.time < distanceToLight) {
+                return true;
+            }
+        } catch (const primitives::NoIntersectionsException& e) {
+            return false;
+        }
+
+        return false;
     }
 };
 

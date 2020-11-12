@@ -49,7 +49,7 @@ int main() {
 
     objects::Sphere floor({0,0,0,1});
     floor.setMaterial(primitives::BaseMaterial(
-        drawing::Colour({0.333, 0.333, 0.333}),
+        drawing::Colour({0.2, 0.2, 0.2}),
         1,
         0.9,
         0.9,

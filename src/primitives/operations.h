@@ -108,7 +108,8 @@ public:
         const objects::Light& light,
         const Point3D& intersection,
         const Vector3D& incoming,
-        const Vector3D& normal
+        const Vector3D& normal,
+        const bool inShadow = false
     ) {
         drawing::Colour baseColour = drawing::Operations::multiply(material.colour, light.getIntensity());
         Vector3D lightVector = math::Operations::normalise(light.getOrigin() - intersection);
@@ -116,6 +117,10 @@ public:
 
         drawing::Colour diffuse = {0,0,0};
         drawing::Colour specular = {0,0,0};
+
+        if (inShadow) {
+            return ambient;
+        }
 
         // check if light hits sphere
         primitives::PrecisionType test = math::Operations::dotProduct(lightVector, normal);
