@@ -24,6 +24,9 @@ jobs:
           name: install cmake 3.19
           command: 'cd / && chmod +x cmake-3.19.0-rc1-Linux-x86_64.sh && ./cmake-3.19.0-rc1-Linux-x86_64.sh --skip-license'
       - run:
+          name: install lcov
+          command: 'apt-get update && sudo apt-get install -y lcov'
+      - run:
           name: install git
           command: 'apt-get update && sudo apt-get install -y git'
       - run:
