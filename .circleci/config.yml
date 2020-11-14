@@ -44,7 +44,7 @@ jobs:
           command: './run_tests.sh'
       - run:
           name: generating test coverage report info
-          command: 'lcov --remove build/tests/CMakeFiles/raytracer_tests.dir/raytracer_test_coverage.info --base-directory build/tests/CMakeFiles/raytracer_tests.dir --capture --directory build/tests/CMakeFiles/raytracer_tests.dir --output-file build/tests/CMakeFiles/raytracer_tests.dir/raytracer_test_coverage.info "user/include/*"'
+          command: 'lcov --remove "`pwd`/lib/*" build/tests/CMakeFiles/raytracer_tests.dir/raytracer_test_coverage.info --base-directory build/tests/CMakeFiles/raytracer_tests.dir --capture --directory build/tests/CMakeFiles/raytracer_tests.dir --output-file build/tests/CMakeFiles/raytracer_tests.dir/raytracer_test_coverage.info'
       - run:
           name: generating test coverage report html
           command: 'genhtml build/tests/CMakeFiles/raytracer_tests.dir/raytracer_test_coverage.info --output-directory test-coverage'
