@@ -1,4 +1,3 @@
-./run_tests.sh
 lcov --exclude "/Applications/Xcode.app/*" \
 --exclude "`pwd`/lib/*" \
 --base-directory build/tests/CMakeFiles/raytracer_tests.dir \

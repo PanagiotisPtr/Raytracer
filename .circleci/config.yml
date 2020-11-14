@@ -39,3 +39,8 @@ jobs:
       - run:
           name: running tests
           command: './run_tests.sh'
+      - run:
+          name: generating test coverage report
+          command: './generate_coverage.sh'
+      - store_artifacts:
+          path: test-coverage
