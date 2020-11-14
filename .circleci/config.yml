@@ -38,7 +38,7 @@ jobs:
           command: 'git submodule init && git submodule update --remote'
       - run:
           name: creating production build files and binaries
-          command: './build_prod.sh'
+          command: './build.sh'
       - run:
           name: running tests
           command: './run_tests.sh'
