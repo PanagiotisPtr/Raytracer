@@ -43,7 +43,10 @@ jobs:
           name: running tests
           command: './run_tests.sh'
       - run:
-          name: generating test coverage report
-          command: './generate_coverage.sh'
+          name: generating test coverage report info
+          command: 'lcov --base-directory build/tests/CMakeFiles/raytracer_tests.dir --capture --directory build/tests/CMakeFiles/raytracer_tests.dir --output-file build/tests/CMakeFiles/raytracer_tests.dir/raytracer_test_coverage.info'
+      - run:
+          name: generating test coverage report html
+          command: 'genhtml build/tests/CMakeFiles/raytracer_tests.dir/raytracer_test_coverage.info --output-directory test-coverage'
       - store_artifacts:
           path: test-coverage
