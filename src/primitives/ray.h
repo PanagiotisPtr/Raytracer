@@ -2,8 +2,6 @@
 #define PRIMITIVES_RAY_H
 
 #include "constants.h"
-#include "intersection.h"
-#include "intersection_container.h"
 #include "math/operators.h"
 
 namespace primitives {

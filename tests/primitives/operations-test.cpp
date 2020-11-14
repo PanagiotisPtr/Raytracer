@@ -12,36 +12,6 @@
 #include "math/transformations.h"
 #include "math/utility.h"
 
-TEST(rayTransformationOperationsTests, rayTransformationTranslate) {
-    primitives::Ray r1({1,2,3,1}, {0,1,2,0});
-
-    primitives::TransformationMatrix m =
-        math::Transformations::translate<primitives::PrecisionType>(4,5,6);
-
-    primitives::Ray r2 = primitives::Operations::transformRay(r1, m);
-
-    primitives::Point3D expectedOrigin = {5, 7, 9, 1};
-    primitives::Vector3D expectedDirection = {0,1,2,0};
-
-    ASSERT_EQ(expectedOrigin, r2.getOrigin());
-    ASSERT_EQ(expectedDirection, r2.getDirection());
-}
-
-TEST(rayTransformationOperationsTests, rayTransformationScale) {
-    primitives::Ray r1({1,2,3,1}, {0,1,2,0});
-
-    primitives::TransformationMatrix m =
-        math::Transformations::scale<primitives::PrecisionType>(4,5,6);
-
-    primitives::Ray r2 = primitives::Operations::transformRay(r1, m);
-
-    primitives::Point3D expectedOrigin = {4, 10, 18, 1};
-    primitives::Vector3D expectedDirection = {0,5,12,0};
-
-    ASSERT_EQ(expectedOrigin, r2.getOrigin());
-    ASSERT_EQ(expectedDirection, r2.getDirection());
-}
-
 TEST(intersectionOperationsTests, raySphereBaseCase) {
     math::Point<primitives::PrecisionType, 4> origin = {0,0,-2,1};
     math::Vector<primitives::PrecisionType, 4> direction = {0,0,1,0};
@@ -50,7 +20,7 @@ TEST(intersectionOperationsTests, raySphereBaseCase) {
     primitives::Ray r(origin, direction);
     objects::Sphere s(p);
 
-    primitives::IntersectionContainer c = primitives::Operations::getRsaySphereIntersections(r, &s);
+    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, &s);
 
     EXPECT_EQ(2, c.front.size());
     EXPECT_EQ(0, c.back.size());
@@ -76,7 +46,7 @@ TEST(intersectionOperationsTests, raySphereBorderLineIntersection) {
     primitives::Ray r(origin, direction);
     objects::Sphere s(p);
 
-    primitives::IntersectionContainer c = primitives::Operations::getRsaySphereIntersections(r, &s);
+    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, &s);
 
     EXPECT_EQ(1, c.front.size());
     EXPECT_EQ(0, c.back.size());
@@ -98,7 +68,7 @@ TEST(intersectionOperationsTests, raySphereNoIntersection) {
     primitives::Ray r(origin, direction);
     objects::Sphere s(p);
 
-    primitives::IntersectionContainer c = primitives::Operations::getRsaySphereIntersections(r, &s);
+    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, &s);
 
     EXPECT_EQ(0, c.front.size());
     EXPECT_EQ(0, c.back.size());
@@ -112,7 +82,7 @@ TEST(intersectionOperationsTests, raySphereOneBehindOneInFront) {
     primitives::Ray r(origin, direction);
     objects::Sphere s(p);
 
-    primitives::IntersectionContainer c = primitives::Operations::getRsaySphereIntersections(r, &s);
+    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, &s);
 
     EXPECT_EQ(1, c.front.size());
     EXPECT_EQ(1, c.back.size());
@@ -138,7 +108,7 @@ TEST(intersectionOperationsTests, raySphereBothBehind) {
     primitives::Ray r(origin, direction);
     objects::Sphere s(p);
 
-    primitives::IntersectionContainer c = primitives::Operations::getRsaySphereIntersections(r, &s);
+    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, &s);
 
     EXPECT_EQ(0, c.front.size());
     EXPECT_EQ(2, c.back.size());
@@ -165,7 +135,7 @@ TEST(intersectionOperationsTests, raySphereScaledSphere) {
         math::Transformations::scale<primitives::PrecisionType>(2,2,2)
     );
 
-    primitives::IntersectionContainer c = primitives::Operations::getRsaySphereIntersections(r, &s);
+    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, &s);
 
     EXPECT_EQ(1, c.front.size());
     EXPECT_EQ(0, c.back.size());
@@ -192,7 +162,7 @@ TEST(intersectionOperationsTests, raySphereMovedSphere) {
         math::Transformations::scale<primitives::PrecisionType>(2,2,2)
     );
 
-    primitives::IntersectionContainer c = primitives::Operations::getRsaySphereIntersections(r, &s);
+    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, &s);
 
     EXPECT_EQ(1, c.front.size());
     EXPECT_EQ(0, c.back.size());
@@ -223,7 +193,7 @@ TEST(intersectionOperationsTests, raySphereMovedAndScaledSphere) {
         math::Transformations::translate<primitives::PrecisionType>(0,2,0)
     );
 
-    primitives::IntersectionContainer c = primitives::Operations::getRsaySphereIntersections(r, &s);
+    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, &s);
 
     EXPECT_EQ(2, c.front.size());
     EXPECT_EQ(0, c.back.size());
@@ -243,21 +213,21 @@ TEST(intersectionOperationsTests, raySphereMovedAndScaledSphere) {
 
 TEST(normalsOperationsTests, getSphereNormalOnX) {
     objects::Sphere s({0,0,0,1});
-    primitives::Vector3D normal = primitives::Operations::getSphereNormalAtPoint(s, {1,0,0,1});
+    primitives::Vector3D normal = s.getNormalAt({1,0,0,1});
 
     EXPECT_EQ(primitives::Vector3D({1,0,0,0}), normal);
 }
 
 TEST(normalsOperationsTests, getSphereNormalOnY) {
     objects::Sphere s({0,0,0,1});
-    primitives::Vector3D normal = primitives::Operations::getSphereNormalAtPoint(s, {0,1,0,1});
+    primitives::Vector3D normal = s.getNormalAt({0,1,0,1});
 
     EXPECT_EQ(primitives::Vector3D({0,1,0,0}), normal);
 }
 
 TEST(normalsOperationsTests, getSphereNormalOnZ) {
     objects::Sphere s({0,0,0,1});
-    primitives::Vector3D normal = primitives::Operations::getSphereNormalAtPoint(s, {0,0,1,1});
+    primitives::Vector3D normal = s.getNormalAt({0,0,1,1});
 
     EXPECT_EQ(primitives::Vector3D({0,0,1,0}), normal);
 }

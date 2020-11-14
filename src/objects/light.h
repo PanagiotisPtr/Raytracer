@@ -7,7 +7,7 @@
 
 namespace objects {
 
-class Light : public Object {
+class Light {
 public:
     Light(drawing::Colour i, primitives::Point3D o)
     : intensity(i), origin(o) {}

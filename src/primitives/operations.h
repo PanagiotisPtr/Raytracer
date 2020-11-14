@@ -2,6 +2,7 @@
 #define PRIMITIVES_OPERATIONS_H
 
 #include <cmath>
+#include <vector>
 
 #include "intersection.h"
 #include "intersection_container.h"
@@ -42,61 +43,16 @@ public:
         return c3;
     }
 
-    static Ray transformRay(const Ray& r, const primitives::TransformationMatrix& m) {
-        primitives::Vector3DMatrix originMatrix = math::Utility::pointToMatrix(r.getOrigin());
-        primitives::Vector3DMatrix directionMatrix = math::Utility::vectorToMatrix(r.getDirection());
+    static IntersectionContainer getRayObjectIntersections(const primitives::Ray& r, const objects::Object* o) {
+        std::vector<PrecisionType> intersectionTimes = o->getRayIntersections(r);
 
-        primitives::Vector3DMatrix newOriginMatrix = m * originMatrix;
-        primitives::Vector3DMatrix newDirectionMatrix = m * directionMatrix;
-
-        primitives::Point3D newOrigin = math::Utility::matrixToPoint(newOriginMatrix);
-        primitives::Vector3D newDirection = math::Utility::matrixToVector(newDirectionMatrix);
-
-        return Ray(newOrigin, newDirection);
-    }
-
-    static IntersectionContainer getRsaySphereIntersections(const primitives::Ray ray, const objects::Sphere* s) {
         IntersectionContainer intersections;
 
-        primitives::Ray r = transformRay(
-            ray,
-            math::Operations::inverse(s->getTransformation())
-        );
-
-        Vector3D sphereToRay = r.getOrigin() - s->getOrigin();
-
-        // solve quadratic formula
-        PrecisionType a = math::Operations::dotProduct(r.getDirection(), r.getDirection());
-        PrecisionType b = 2 * math::Operations::dotProduct(r.getDirection(), sphereToRay);
-        PrecisionType c = math::Operations::dotProduct(sphereToRay, sphereToRay) - 1;
-
-        PrecisionType discriminant = b*b - (PrecisionType)4*a*c;
-
-        if (discriminant < 0) {
-            return intersections;
+        for (PrecisionType t : intersectionTimes) {
+            intersections.addIntersection(primitives::Intersection(t, o));
         }
 
-        PrecisionType t1 = (-b - std::sqrt(discriminant)) / (2 * a);
-        PrecisionType t2 = (-b + std::sqrt(discriminant)) / (2 * a);
-
-        intersections.addIntersection(Intersection(t1, s));
-        intersections.addIntersection(Intersection(t2, s));
-
         return intersections;
-    }
-
-    static Vector3D getSphereNormalAtPoint(const objects::Object& s, const Point3D& p) {
-        Point3D local = math::Utility::matrixToPoint(
-            math::Operations::inverse(s.getTransformation()) * math::Utility::pointToMatrix(p)
-        );
-        Vector3D localNormal = local - Point3D({0,0,0,1});
-        Vector3D worldNormal = math::Utility::matrixToVector(
-            math::Operations::transpose(math::Operations::inverse(s.getTransformation()))
-            * math::Utility::vectorToMatrix(localNormal)
-        );
-        worldNormal[3] = 0;
-
-        return math::Operations::normalise(worldNormal);
     }
 
     static Vector3D getReflection(const Vector3D& v, const Vector3D& normal) {

@@ -28,7 +28,7 @@ public:
         primitives::IntersectionContainer c;
         for (const objects::Sphere& s : this->objects) {
             primitives::IntersectionContainer i =
-                primitives::Operations::getRsaySphereIntersections(r, &s);
+                primitives::Operations::getRayObjectIntersections(r, &s);
             c = primitives::Operations::mergeIntersectionContainers(c, i);
         }
 
