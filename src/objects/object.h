@@ -17,7 +17,7 @@ namespace objects {
 class Object {
 public:
     Object()
-    : origin({0,0,0,0}), transform(math::Matrix<primitives::PrecisionType, 4, 4>::getIdentity()) {}
+    : origin({0,0,0,1}), transform(math::Matrix<primitives::PrecisionType, 4, 4>::getIdentity()) {}
 
     Object(primitives::Point3D o)
     : origin(o), transform(math::Matrix<primitives::PrecisionType, 4, 4>::getIdentity()) {}
