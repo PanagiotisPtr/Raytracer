@@ -14,11 +14,11 @@ public:
 
     Sphere(primitives::Point3D o) : Object(o) {}
 protected:
-    primitives::Vector3D getLocalNormalAt(const primitives::Point3D& p) const {
+    primitives::Vector3D getLocalNormalAt(const primitives::Point3D& p) const override {
         return p - primitives::Point3D({0,0,0,1});
     }
 
-    std::vector<primitives::PrecisionType> getLocalRayIntersections(const primitives::Ray& r) const {
+    std::vector<primitives::PrecisionType> getLocalRayIntersections(const primitives::Ray& r) const override {
         primitives::Vector3D sphereToRay = r.getOrigin() - this->getOrigin();
 
         // solve quadratic formula
