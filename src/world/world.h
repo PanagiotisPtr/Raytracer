@@ -2,8 +2,9 @@
 #define WORLD_WORLD_H
 
 #include <vector>
+#include <functional>
 
-#include "objects/sphere.h"
+#include "objects/object.h"
 #include "objects/light.h"
 #include "primitives/ray.h"
 #include "primitives/operations.h"
@@ -11,37 +12,38 @@
 
 namespace world {
 
-// Currently world only allows sphere objects to be added
 class World {
 public:
+    using constObjectReference = std::reference_wrapper<const objects::Object>;
+    using constLightReference = std::reference_wrapper<const objects::Light>;
+
     World() {}
 
-    void addObject(objects::Sphere s) {
-        objects.push_back(s);
+    void addObject(const objects::Object& o) {
+        objects.push_back(std::cref(o));
     }
 
-    void addObject(objects::Light l) {
-        lights.push_back(l);
+    void addObject(const objects::Light& l) {
+        lights.push_back(std::cref(l));
     }
 
     primitives::IntersectionContainer getIntersections(const primitives::Ray& r) const {
         primitives::IntersectionContainer c;
-        for (const objects::Sphere& s : this->objects) {
+        for (const objects::Object& o : this->objects) {
             primitives::IntersectionContainer i =
-                primitives::Operations::getRayObjectIntersections(r, &s);
+                primitives::Operations::getRayObjectIntersections(r, o);
             c = primitives::Operations::mergeIntersectionContainers(c, i);
         }
 
         return c;
     }
 
-    const std::vector<objects::Light> getLights() const { return this->lights; }
+    const std::vector<constObjectReference> getObjects() const { return this->objects; }
 
-    // currently only works with spheres
-    const std::vector<objects::Sphere> getObjects() const { return this->objects; }
+    const std::vector<constLightReference> getLights() const { return this->lights; }
 private:
-    std::vector<objects::Sphere> objects;
-    std::vector<objects::Light> lights;
+    std::vector<constObjectReference> objects;
+    std::vector<constLightReference> lights;
 };
 
 } // namespace world

@@ -25,7 +25,7 @@ TEST(worldTests, addObjectToWorld) {
     ASSERT_EQ(0, w.getLights().size());
     ASSERT_EQ(1, w.getObjects().size());
 
-    objects::Sphere r = w.getObjects()[0];
+    const objects::Object& r = w.getObjects()[0];
 
     ASSERT_EQ(s.getOrigin(), r.getOrigin());
 }

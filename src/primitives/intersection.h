@@ -9,10 +9,10 @@
 namespace primitives {
 
 struct Intersection {
-    Intersection(PrecisionType t, const objects::Object* o) : time(t), target(o) {}
+    Intersection(PrecisionType t, const objects::Object& o) : time(t), target(o) {}
 
     PrecisionType time;
-    const objects::Object* target;
+    const objects::Object& target;
 };
 
 struct IntersectionCompare {

@@ -43,8 +43,8 @@ public:
         return c3;
     }
 
-    static IntersectionContainer getRayObjectIntersections(const primitives::Ray& r, const objects::Object* o) {
-        std::vector<PrecisionType> intersectionTimes = o->getRayIntersections(r);
+    static IntersectionContainer getRayObjectIntersections(const primitives::Ray& r, const objects::Object& o) {
+        std::vector<PrecisionType> intersectionTimes = o.getRayIntersections(r);
 
         IntersectionContainer intersections;
 

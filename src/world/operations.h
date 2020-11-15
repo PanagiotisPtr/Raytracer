@@ -2,6 +2,7 @@
 #define WORLD_OPERATIONS_H
 
 #include <cmath>
+#include <functional>
 
 #include "drawing/colour.h"
 #include "primitives/ray.h"
@@ -26,10 +27,10 @@ public:
             primitives::Intersection first = c.getFirst();
             for (const objects::Light& l : w.getLights()) {
                 primitives::Point3D p = r.getAtTime(first.time);
-                const objects::Object* object = first.target;
+                const objects::Object& object = first.target;
                 primitives::Vector3D rayDirection = math::Operations::normalise(r.getDirection());
                 primitives::Vector3D in = primitives::Vector3D({0,0,0,0}) - rayDirection;
-                primitives::Vector3D normal = object->getNormalAt(p);
+                primitives::Vector3D normal = object.getNormalAt(p);
                 bool inside = math::Operations::dotProduct(normal, in) < 0 ? true : false;
                 bool inShadow = Operations::shadowed(p, l, w);
 
@@ -38,7 +39,7 @@ public:
                 }
 
                 drawing::Colour colour =
-                    primitives::Operations::getColourOnSphere(object->getMaterial(), l, p, in, normal, inShadow);
+                    primitives::Operations::getColourOnSphere(object.getMaterial(), l, p, in, normal, inShadow);
 
                 finalColour = drawing::Operations::add(finalColour, colour);
             }

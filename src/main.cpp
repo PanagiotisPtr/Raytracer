@@ -16,6 +16,7 @@
 
 #include "objects/sphere.h"
 #include "objects/light.h"
+#include "objects/plane.h"
 
 #include "world/world.h"
 #include "world/camera.h"
@@ -64,10 +65,21 @@ int main() {
         math::Transformations::translate<primitives::PrecisionType>(0.0,-0.6,0.0)
     );
 
+    objects::Plane plane;
+
+    plane.addTransformation(
+        math::Transformations::translate<primitives::PrecisionType>(0.0, 3.0, 0.0)
+    );
+
+    plane.addTransformation(
+        math::Transformations::rotateX<primitives::PrecisionType>(M_PI / 2)
+    );
+
     world::World w;
     w.addObject(s);
     w.addObject(l);
     w.addObject(floor);
+    w.addObject(plane);
 
     world::Camera<300, 200> camera(M_PI/3);
     camera.setTransformation(world::Operations::calculateCameraTransformation(

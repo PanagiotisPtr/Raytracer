@@ -1,4 +1,6 @@
 #include <cstddef>
+#include <functional>
+
 #include "gtest/gtest.h"
 #include "primitives/constants.h"
 #include "primitives/ray.h"
@@ -20,7 +22,7 @@ TEST(intersectionOperationsTests, raySphereBaseCase) {
     primitives::Ray r(origin, direction);
     objects::Sphere s(p);
 
-    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, &s);
+    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, s);
 
     EXPECT_EQ(2, c.front.size());
     EXPECT_EQ(0, c.back.size());
@@ -28,11 +30,11 @@ TEST(intersectionOperationsTests, raySphereBaseCase) {
     primitives::Intersection first = *std::begin(c.front);
     primitives::Intersection second = *std::next(std::begin(c.front));
 
-    EXPECT_EQ(&s, first.target);
-    EXPECT_EQ(&s, second.target);
+    EXPECT_EQ(&s, &first.target);
+    EXPECT_EQ(&s, &second.target);
 
     EXPECT_EQ(first.time, c.getFirst().time);
-    EXPECT_EQ(first.target, c.getFirst().target);
+    EXPECT_EQ(&first.target, &c.getFirst().target);
 
     EXPECT_DOUBLE_EQ(1, first.time);
     EXPECT_DOUBLE_EQ(3, second.time);
@@ -46,14 +48,14 @@ TEST(intersectionOperationsTests, raySphereBorderLineIntersection) {
     primitives::Ray r(origin, direction);
     objects::Sphere s(p);
 
-    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, &s);
+    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, s);
 
     EXPECT_EQ(1, c.front.size());
     EXPECT_EQ(0, c.back.size());
 
     primitives::Intersection first = *std::begin(c.front);
 
-    EXPECT_EQ(&s, first.target);
+    EXPECT_EQ(&s, &first.target);
 
     EXPECT_EQ(first.time, c.getFirst().time);
 
@@ -68,7 +70,7 @@ TEST(intersectionOperationsTests, raySphereNoIntersection) {
     primitives::Ray r(origin, direction);
     objects::Sphere s(p);
 
-    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, &s);
+    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, s);
 
     EXPECT_EQ(0, c.front.size());
     EXPECT_EQ(0, c.back.size());
@@ -82,7 +84,7 @@ TEST(intersectionOperationsTests, raySphereOneBehindOneInFront) {
     primitives::Ray r(origin, direction);
     objects::Sphere s(p);
 
-    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, &s);
+    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, s);
 
     EXPECT_EQ(1, c.front.size());
     EXPECT_EQ(1, c.back.size());
@@ -90,11 +92,11 @@ TEST(intersectionOperationsTests, raySphereOneBehindOneInFront) {
     primitives::Intersection first = *std::begin(c.front);
     primitives::Intersection second = *std::begin(c.back);
 
-    EXPECT_EQ(&s, first.target);
-    EXPECT_EQ(&s, second.target);
+    EXPECT_EQ(&s, &first.target);
+    EXPECT_EQ(&s, &second.target);
 
     EXPECT_EQ(first.time, c.getFirst().time);
-    EXPECT_EQ(first.target, c.getFirst().target);
+    EXPECT_EQ(&first.target, &c.getFirst().target);
 
     EXPECT_DOUBLE_EQ(1, first.time);
     EXPECT_DOUBLE_EQ(-1, second.time);
@@ -108,7 +110,7 @@ TEST(intersectionOperationsTests, raySphereBothBehind) {
     primitives::Ray r(origin, direction);
     objects::Sphere s(p);
 
-    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, &s);
+    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, s);
 
     EXPECT_EQ(0, c.front.size());
     EXPECT_EQ(2, c.back.size());
@@ -116,8 +118,8 @@ TEST(intersectionOperationsTests, raySphereBothBehind) {
     primitives::Intersection first = *std::begin(c.back);
     primitives::Intersection second = *std::next(std::begin(c.back));
 
-    EXPECT_EQ(&s, first.target);
-    EXPECT_EQ(&s, second.target);
+    EXPECT_EQ(&s, &first.target);
+    EXPECT_EQ(&s, &second.target);
 
     EXPECT_DOUBLE_EQ(-1, first.time);
     EXPECT_DOUBLE_EQ(-3, second.time);
@@ -135,17 +137,17 @@ TEST(intersectionOperationsTests, raySphereScaledSphere) {
         math::Transformations::scale<primitives::PrecisionType>(2,2,2)
     );
 
-    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, &s);
+    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, s);
 
     EXPECT_EQ(1, c.front.size());
     EXPECT_EQ(0, c.back.size());
 
     primitives::Intersection first = *std::begin(c.front);
 
-    EXPECT_EQ(&s, first.target);
+    EXPECT_EQ(&s, &first.target);
 
     EXPECT_EQ(first.time, c.getFirst().time);
-    EXPECT_EQ(first.target, c.getFirst().target);
+    EXPECT_EQ(&first.target, &c.getFirst().target);
 
     EXPECT_DOUBLE_EQ(2, first.time);
 }
@@ -162,17 +164,17 @@ TEST(intersectionOperationsTests, raySphereMovedSphere) {
         math::Transformations::scale<primitives::PrecisionType>(2,2,2)
     );
 
-    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, &s);
+    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, s);
 
     EXPECT_EQ(1, c.front.size());
     EXPECT_EQ(0, c.back.size());
 
     primitives::Intersection first = *std::begin(c.front);
 
-    EXPECT_EQ(&s, first.target);
+    EXPECT_EQ(&s, &first.target);
 
     EXPECT_EQ(first.time, c.getFirst().time);
-    EXPECT_EQ(first.target, c.getFirst().target);
+    EXPECT_EQ(&first.target, &c.getFirst().target);
 
     EXPECT_DOUBLE_EQ(2, first.time);
 }
@@ -193,7 +195,7 @@ TEST(intersectionOperationsTests, raySphereMovedAndScaledSphere) {
         math::Transformations::translate<primitives::PrecisionType>(0,2,0)
     );
 
-    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, &s);
+    primitives::IntersectionContainer c = primitives::Operations::getRayObjectIntersections(r, s);
 
     EXPECT_EQ(2, c.front.size());
     EXPECT_EQ(0, c.back.size());
@@ -201,11 +203,11 @@ TEST(intersectionOperationsTests, raySphereMovedAndScaledSphere) {
     primitives::Intersection first = *std::begin(c.front);
     primitives::Intersection second = *std::next(std::begin(c.front));
 
-    EXPECT_EQ(&s, first.target);
-    EXPECT_EQ(&s, second.target);
+    EXPECT_EQ(&s, &first.target);
+    EXPECT_EQ(&s, &second.target);
 
     EXPECT_EQ(first.time, c.getFirst().time);
-    EXPECT_EQ(first.target, c.getFirst().target);
+    EXPECT_EQ(&first.target, &c.getFirst().target);
 
     EXPECT_DOUBLE_EQ(0, first.time);
     EXPECT_DOUBLE_EQ(4, second.time);
