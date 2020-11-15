@@ -8,7 +8,7 @@
 
 namespace objects {
 
-class Plane : Object {
+class Plane : public Object {
 public:
     Plane() : Object() {}
 
