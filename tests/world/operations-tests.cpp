@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "world/world.h"
-#include "world/Operations.h"
+#include "world/operations.h"
 #include "math/transformations.h"
 #include "primitives/ray.h"
 #include "primitives/intersection_container.h"
