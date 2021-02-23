@@ -19,7 +19,11 @@ namespace world {
 
 class Operations {
 public:
-    static drawing::Colour colorAtIntersection(const World& w, const primitives::Ray& r) {
+    static drawing::Colour colourAtIntersection(const World& w, const primitives::Ray& r, const unsigned bounces = 2) {
+        if (bounces == 0) {
+            return drawing::Colour({0,0,0});
+        }
+
         primitives::IntersectionContainer c = w.getIntersections(r);
         drawing::Colour finalColour({0,0,0});
 
@@ -39,7 +43,21 @@ public:
                 }
 
                 drawing::Colour colour =
-                    primitives::Operations::getColourOnSphere(object.getMaterial(), l, p, in, normal, inShadow);
+                    primitives::Operations::getColourOnObject(object.getMaterial(), l, p, in, normal, inShadow);
+
+                // check if reflective
+                if (object.getMaterial().reflective >= math::EQUALITY_DELTA) {
+                    primitives::Vector3D reflectedVector =
+                        primitives::Operations::getReflection(primitives::Vector3D({0,0,0,0})-in, normal);
+                    primitives::Ray reflectedRay(
+                        // Move point slightly up towards its normal vector to avoid self interactions
+                        p + (normal * (primitives::PrecisionType)math::EQUALITY_DELTA),
+                        reflectedVector
+                    );
+
+                    drawing::Colour reflectedColour = world::Operations::colourAtIntersection(w, reflectedRay, bounces - 1);
+                    colour = drawing::Operations::add(colour, reflectedColour);
+                }
 
                 finalColour = drawing::Operations::add(finalColour, colour);
             }

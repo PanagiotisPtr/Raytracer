@@ -59,7 +59,7 @@ public:
         return v - (normal * (math::Operations::dotProduct(v, normal) * 2));
     }
 
-    static drawing::Colour getColourOnSphere(
+    static drawing::Colour getColourOnObject(
         const primitives::BaseMaterial& material,
         const objects::Light& light,
         const Point3D& intersection,
@@ -78,7 +78,7 @@ public:
             return ambient;
         }
 
-        // check if light hits sphere
+        // check if light hits object
         primitives::PrecisionType test = math::Operations::dotProduct(lightVector, normal);
         if (test >= 0) {
             diffuse = drawing::Operations::multiply(drawing::Operations::multiply(baseColour, material.diffuse), test);

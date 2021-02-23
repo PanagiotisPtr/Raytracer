@@ -8,11 +8,13 @@
 #include "primitives/intersection_container.h"
 #include "primitives/operations.h"
 #include "objects/sphere.h"
+#include "objects/plane.h"
 #include "math/vector.h"
 #include "math/point.h"
 #include "math/operators.h"
 #include "math/transformations.h"
 #include "math/utility.h"
+#include "world/world.h"
 
 TEST(intersectionOperationsTests, raySphereBaseCase) {
     math::Point<primitives::PrecisionType, 4> origin = {0,0,-2,1};

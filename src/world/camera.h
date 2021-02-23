@@ -81,7 +81,7 @@ public:
         for (std::size_t y = 0; y < Height; y++) {
             for (std::size_t x = 0; x < Width; x++) {
                 primitives::Ray r = this->getRayForPosition(x, y);
-                drawing::Colour c = Operations::colorAtIntersection(w, r);
+                drawing::Colour c = Operations::colourAtIntersection(w, r);
                 (*image)[y][x] = c;
             }
         }

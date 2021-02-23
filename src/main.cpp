@@ -224,7 +224,8 @@ int main() {
         1,
         0.9,
         0.9,
-        200.0
+        200.0,
+        0.25
     ));
 
     floor.addTransformation(
@@ -285,7 +286,7 @@ int main() {
         w.addObject(part);
     }
 
-    world::Camera<300, 200> camera(M_PI/3);
+    world::Camera<600, 400> camera(M_PI/3);
     camera.setTransformation(world::Operations::calculateCameraTransformation(
         primitives::Point3D({-3.75,2.0,-3.0,1.0}),
         primitives::Point3D({0,0,0,1}),

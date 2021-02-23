@@ -15,7 +15,7 @@ public:
     Plane(primitives::Point3D o) : Object(o) {}
 protected:
     primitives::Vector3D getLocalNormalAt(const primitives::Point3D& p) const override {
-        // plane lies on the axis z and x so norma is always on y pointing up
+        // plane lies on the axis z and x so normal is always on y pointing up
         return primitives::Vector3D({0,1,0,0});
     }
 

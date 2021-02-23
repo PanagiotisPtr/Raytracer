@@ -14,12 +14,14 @@ TEST(baseMaterialTests, constructorBaseCase) {
     primitives::PrecisionType diffuse = 1.1;
     primitives::PrecisionType specular = 0.8;
     primitives::PrecisionType shininess = 100;
+    primitives::PrecisionType reflectivity = 0.5;
     primitives::BaseMaterial m(
         colour,
         ambient,
         diffuse,
         specular,
-        shininess
+        shininess,
+        reflectivity
     );
 
     EXPECT_EQ(colour.green(), m.colour.green());
@@ -30,6 +32,7 @@ TEST(baseMaterialTests, constructorBaseCase) {
     EXPECT_EQ(diffuse, m.diffuse);
     EXPECT_EQ(specular, m.specular);
     EXPECT_EQ(shininess, m.shininess);
+    EXPECT_EQ(reflectivity, m.reflective);
 }
 
 TEST(baseMaterialTests, defaultValuesConstructorTest) {
@@ -44,4 +47,5 @@ TEST(baseMaterialTests, defaultValuesConstructorTest) {
     EXPECT_EQ(0.9, defaultMaterial.diffuse);
     EXPECT_EQ(0.9, defaultMaterial.specular);
     EXPECT_EQ(200.0, defaultMaterial.shininess);
+    EXPECT_EQ(0.0, defaultMaterial.reflective);
 }
