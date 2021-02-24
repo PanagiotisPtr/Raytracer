@@ -166,7 +166,7 @@ private:
                         primitives::Ray r = this->getRayForPosition(x, y);
                         drawing::Colour c = Operations::colourAtIntersection(w, r);
                         // the image doesn't need locking because every thread writes
-                        // ina different memory location
+                        // in a different memory location
                         (*image)[y][x] = c;
                     }
                 }
