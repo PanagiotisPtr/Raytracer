@@ -19,7 +19,7 @@ namespace world {
 
 class Operations {
 public:
-    static drawing::Colour colourAtIntersection(const World& w, const primitives::Ray& r, const unsigned bounces = 2) {
+    static drawing::Colour colourAtIntersection(const World& w, const primitives::Ray& r, const unsigned bounces = 5) {
         if (bounces == 0) {
             return drawing::Colour({0,0,0});
         }
@@ -36,17 +36,70 @@ public:
                 primitives::Vector3D in = primitives::Vector3D({0,0,0,0}) - rayDirection;
                 primitives::Vector3D normal = object.getNormalAt(p);
                 bool inside = math::Operations::dotProduct(normal, in) < 0 ? true : false;
-                bool inShadow = Operations::shadowed(p, l, w);
+                bool inShadow = false;//Operations::shadowed(p, l, w);
 
                 if (inside) {
                     normal = primitives::Vector3D({0,0,0,0}) - normal;
                 }
 
+                // std::cout << "MyRay: " << r.getOrigin() << "\t" << r.getDirection() << std::endl;
+                // std::cout << "Intersected at: " << p << "\t\tRemaining: " << bounces << std::endl;
+                // std::cout << "At time: " << first.time << std::endl;
+
                 drawing::Colour colour =
                     primitives::Operations::getColourOnObject(object.getMaterial(), l, p, in, normal, inShadow);
 
+                drawing::Colour refractedColour({0,0,0});
+                drawing::Colour reflectedColour({0,0,0});
+                primitives::PrecisionType reflectancePercent = 0;
+
+                if (object.getMaterial().transparency > 0) {
+                    // std::cout << "Is transparent" << std::endl;
+                    std::pair<primitives::PrecisionType, primitives::PrecisionType> refractiveIndexes =
+                        primitives::Operations::getRefractiveIndexes(c, object);
+                    if (inside) {
+                        std::swap(refractiveIndexes.first, refractiveIndexes.second);
+                    }
+                    
+                    // std::cout << "Refractive indexes: eta1: " << refractiveIndexes.first << "\teta2: " << refractiveIndexes.second << std::endl; 
+                    primitives::PrecisionType ratio = refractiveIndexes.first / refractiveIndexes.second;
+                    primitives::PrecisionType cosTheta1 = math::Operations::dotProduct(
+                        in,
+                        normal
+                    );
+                    primitives::PrecisionType sinTheta2Squared = (ratio * ratio) * (1 - cosTheta1*cosTheta1);
+
+                    // std::cout << "sinTheta2Squared: " << sinTheta2Squared << std::endl;
+
+                    if (sinTheta2Squared < 1) {
+                        primitives::Ray refracted = primitives::Operations::getRefractedRay(
+                            refractiveIndexes.first,
+                            refractiveIndexes.second,
+                            p,
+                            in,
+                            normal
+                        );
+
+                        // std::cout << "Shooting refracted ray from point: " << refracted.getOrigin() << "\t at direction" << refracted.getDirection() << std::endl;
+
+                        refractedColour = Operations::colourAtIntersection(w, refracted, bounces - 1);
+                        refractedColour = drawing::Operations::multiply(refractedColour, object.getMaterial().transparency);
+
+                        if (object.getMaterial().reflective > 0) {
+                            reflectancePercent = primitives::Operations::getReflectancePercent(
+                                refractiveIndexes.first,
+                                refractiveIndexes.second,
+                                in,
+                                normal
+                            );
+                        }
+                    }
+                } else {
+                    // std::cout << "Isn't transparent. Colour is: " << colour.red() << '\t' << colour.green() << '\t' << colour.blue() << std::endl;
+                }
+
                 // check if reflective
-                if (object.getMaterial().reflective >= math::EQUALITY_DELTA) {
+                if (object.getMaterial().reflective > 0 && !inside) {
                     primitives::Vector3D reflectedVector =
                         primitives::Operations::getReflection(primitives::Vector3D({0,0,0,0})-in, normal);
                     primitives::Ray reflectedRay(
@@ -55,11 +108,18 @@ public:
                         reflectedVector
                     );
 
-                    drawing::Colour reflectedColour = world::Operations::colourAtIntersection(w, reflectedRay, bounces - 1);
-                    colour = drawing::Operations::add(colour, reflectedColour);
+                    // std::cout << "Shooting reflection ray..." << std::endl;
+                    reflectedColour = Operations::colourAtIntersection(w, reflectedRay, bounces - 1);
                 }
 
                 finalColour = drawing::Operations::add(finalColour, colour);
+                if (object.getMaterial().reflective > 0 && object.getMaterial().transparency > 0) {
+                    refractedColour = drawing::Operations::multiply(refractedColour, 1 - reflectancePercent);
+                    reflectedColour = drawing::Operations::multiply(reflectedColour, reflectancePercent);
+                }
+
+                finalColour = drawing::Operations::add(refractedColour, finalColour);
+                finalColour = drawing::Operations::add(reflectedColour, finalColour);
             }
         } catch(const primitives::NoIntersectionsException& e) {
             return finalColour;

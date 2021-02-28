@@ -15,6 +15,7 @@
 #include "math/transformations.h"
 #include "math/utility.h"
 #include "world/world.h"
+#include "world/operations.h"
 
 TEST(intersectionOperationsTests, raySphereBaseCase) {
     math::Point<primitives::PrecisionType, 4> origin = {0,0,-2,1};
@@ -262,5 +263,113 @@ TEST(reflectionOperationsTests, reflectionHasSameMagnitude) {
     EXPECT_DOUBLE_EQ(
         math::Operations::magnitude(expected),
         math::Operations::magnitude(reflection)
+    );
+}
+
+TEST(reflectionOperationsTests, refractiveIndexBaseCase) {
+    objects::Sphere s1;
+
+    s1.addTransformation(
+        math::Transformations::scale<primitives::PrecisionType>(2,2,2)
+    );
+
+    s1.setMaterial(primitives::BaseMaterial(
+        drawing::Colour({0.0, 0.0, 0.0}),
+        1,
+        1.0,
+        1,
+        300.0,
+        1,
+        1.0,
+        1.5
+    ));
+
+    objects::Sphere s2;
+
+    s2.setMaterial(primitives::BaseMaterial(
+        drawing::Colour({0.0, 0.0, 0.0}),
+        1,
+        1.0,
+        1,
+        300.0,
+        1,
+        1.0,
+        2
+    ));
+
+    world::World w;
+
+    w.addObject(s1);
+    w.addObject(s2);
+
+    primitives::Ray r(primitives::Point3D({0,0,-6,1}), primitives::Vector3D({0,0,1,0}));
+
+    primitives::IntersectionContainer c = w.getIntersections(r);
+
+    std::pair<primitives::PrecisionType, primitives::PrecisionType> refractiveIndexes = 
+        primitives::Operations::getRefractiveIndexes(c, c.getFirst().target);
+
+    EXPECT_DOUBLE_EQ(
+        refractiveIndexes.first,
+        1
+    );
+
+    EXPECT_DOUBLE_EQ(
+        refractiveIndexes.second,
+        1.5
+    );
+}
+
+TEST(reflectionOperationsTests, reflectancePercentageBaseCase) {
+    objects::Sphere s1;
+
+    s1.addTransformation(
+        math::Transformations::scale<primitives::PrecisionType>(2,2,2)
+    );
+
+    s1.setMaterial(primitives::BaseMaterial(
+        drawing::Colour({0.0, 0.0, 0.0}),
+        1,
+        1.0,
+        1,
+        300.0,
+        1,
+        1.0,
+        1.5
+    ));
+
+    world::World w;
+
+    w.addObject(s1);
+
+    primitives::Ray r(primitives::Point3D({0,0,0,1}), primitives::Vector3D({0,1,0,0}));
+
+    primitives::IntersectionContainer c = w.getIntersections(r);
+
+    primitives::Intersection i = c.getFirst();
+
+    std::pair<primitives::PrecisionType, primitives::PrecisionType> refractiveIndexes = 
+        primitives::Operations::getRefractiveIndexes(c, c.getFirst().target);
+
+    primitives::Point3D p = r.getAtTime(i.time);
+    primitives::Vector3D normal = i.target.getNormalAt(p);
+    primitives::Vector3D rayDirection = math::Operations::normalise(r.getDirection());
+    primitives::Vector3D in = primitives::Vector3D({0,0,0,0}) - rayDirection;
+    bool inside = math::Operations::dotProduct(normal, in) < 0 ? true : false;
+
+    if (inside) {
+        normal = primitives::Vector3D({0,0,0,0}) - normal;
+    }
+
+    primitives::PrecisionType reflectancePercent = primitives::Operations::getReflectancePercent(
+        refractiveIndexes.first,
+        refractiveIndexes.second,
+        r.getDirection(),
+        normal
+    );
+
+    EXPECT_DOUBLE_EQ(
+        reflectancePercent,
+        0.04
     );
 }

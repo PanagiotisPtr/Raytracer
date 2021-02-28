@@ -61,3 +61,50 @@ TEST(reflectivityColourTest, colourWithReflectivity) {
 
     ASSERT_GT(c.red(), 0);
 }
+
+TEST(refractionWorldTests, testRefractedRay) {
+    world::World w;
+    objects::Plane p;
+    objects::Light l({1,1,1}, {0,0,0,1});
+
+    p.addTransformation(
+        math::Transformations::rotateX<primitives::PrecisionType>(M_PI/2)
+    );
+
+    p.addTransformation(
+        math::Transformations::translate<primitives::PrecisionType>(0,4,0)
+    );
+
+    p.setMaterial(primitives::BaseMaterial(
+        drawing::Colour({0.3, 0.5, 0.2}),
+        1,
+        1.0,
+        0.2,
+        20.0
+    ));
+
+    objects::Sphere s1;
+
+    s1.setMaterial(primitives::BaseMaterial(
+        drawing::Colour({0.0, 0.0, 0.0}),
+        1,
+        1.0,
+        1,
+        300.0,
+        1,
+        1.0,
+        1.52
+    ));
+
+    w.addObject(s1);    
+    w.addObject(p);
+    w.addObject(l);
+    
+    primitives::Ray r(primitives::Point3D({0.0,-0.5,-2.0,1.0}), primitives::Vector3D({0,0,1,0}));
+
+    drawing::Colour c = world::Operations::colourAtIntersection(w, r);
+
+    bool colourIsBlack = c.red() == 0 && c.green() == 0 && c.blue() == 0;
+
+    EXPECT_EQ(false, colourIsBlack);
+}

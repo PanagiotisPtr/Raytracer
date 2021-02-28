@@ -280,11 +280,29 @@ int main() {
     w.addObject(leftWall);
     w.addObject(rightWall);
 
-    std::vector<objects::Sphere> dogParts = dogObjects();
+    // std::vector<objects::Sphere> dogParts = dogObjects();
 
-    for (const objects::Sphere& part : dogParts) {
-        w.addObject(part);
-    }
+    // for (const objects::Sphere& part : dogParts) {
+    //     w.addObject(part);
+    // }
+
+    objects::Sphere glassSphere;
+    glassSphere.setMaterial(primitives::BaseMaterial(
+        drawing::Colour({0.0, 0.0, 0.0}),
+        1,
+        1.0,
+        1,
+        300.0,
+        1,
+        1.0,
+        1.52
+    ));
+
+    glassSphere.addTransformation(
+        math::Transformations::translate<primitives::PrecisionType>(0.0,0.5,0.0)
+    );
+
+    w.addObject(glassSphere);
 
     world::Camera<600, 400> camera(M_PI/3);
     camera.setTransformation(world::Operations::calculateCameraTransformation(
