@@ -18,6 +18,7 @@
 #include "objects/sphere.h"
 #include "objects/light.h"
 #include "objects/plane.h"
+#include "objects/cube.h"
 
 #include "world/world.h"
 #include "world/camera.h"
@@ -286,23 +287,20 @@ int main() {
     //     w.addObject(part);
     // }
 
-    objects::Sphere glassSphere;
-    glassSphere.setMaterial(primitives::BaseMaterial(
-        drawing::Colour({0.0, 0.0, 0.0}),
+    objects::Cube cube;
+    cube.setMaterial(primitives::BaseMaterial(
+        drawing::Colour({0.8, 0.2, 0.2}),
         1,
         1.0,
-        1,
-        300.0,
-        1,
-        1.0,
-        1.52
+        0.2,
+        20.0
     ));
 
-    glassSphere.addTransformation(
+    cube.addTransformation(
         math::Transformations::translate<primitives::PrecisionType>(0.0,0.5,0.0)
     );
 
-    w.addObject(glassSphere);
+    w.addObject(cube);
 
     world::Camera<600, 400> camera(M_PI/3);
     camera.setTransformation(world::Operations::calculateCameraTransformation(

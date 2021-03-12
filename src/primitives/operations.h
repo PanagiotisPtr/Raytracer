@@ -144,10 +144,6 @@ public:
         PrecisionType cosTheta1 = math::Operations::dotProduct(rayDirection, normal);
         PrecisionType sinTheta2Squared = (ratio * ratio) * (1 - cosTheta1*cosTheta1);
 
-        // std::cout << "Normal: " << normal << std::endl;
-
-        // std::cout << "cosTheta1: " << cosTheta1 << std::endl;
-
         PrecisionType cosTheta2 = sqrt(1 - sinTheta2Squared);
         Vector3D direction =
             normal * (ratio * cosTheta1 - cosTheta2) - (rayDirection * ratio);
