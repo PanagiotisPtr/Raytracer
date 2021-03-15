@@ -19,6 +19,7 @@
 #include "objects/light.h"
 #include "objects/plane.h"
 #include "objects/cube.h"
+#include "objects/cylinder.h"
 
 #include "world/world.h"
 #include "world/camera.h"
@@ -287,8 +288,8 @@ int main() {
     //     w.addObject(part);
     // }
 
-    objects::Cube cube;
-    cube.setMaterial(primitives::BaseMaterial(
+    objects::Cylinder cylinder;
+    cylinder.setMaterial(primitives::BaseMaterial(
         drawing::Colour({0.8, 0.2, 0.2}),
         1,
         1.0,
@@ -296,11 +297,11 @@ int main() {
         20.0
     ));
 
-    cube.addTransformation(
+    cylinder.addTransformation(
         math::Transformations::translate<primitives::PrecisionType>(0.0,0.5,0.0)
     );
 
-    w.addObject(cube);
+    w.addObject(cylinder);
 
     world::Camera<600, 400> camera(M_PI/3);
     camera.setTransformation(world::Operations::calculateCameraTransformation(
