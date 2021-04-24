@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <exception>
+#include <fstream>
 
 #ifndef M_PI
     #define M_PI 3.14159265358979323846
@@ -218,98 +220,100 @@ std::vector<objects::Sphere> dogObjects() {
     return parts;
 }
 
-int main() {
+primitives::TransformationMatrix readTransformationMatrix(std::istream& in) {
+    primitives::TransformationMatrix rv;
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            in >> rv[i][j];
+            rv[i][j] *= 4;
+        }
+    }
+
+    return rv;
+}
+
+primitives::BaseMaterial readMaterial(std::istream& in) {
+    primitives::PrecisionType r, g, b;
+    in >> r >> g >> b;
+
+    return primitives::BaseMaterial(
+        drawing::Colour({ (double)r, (double)g, (double)b }),
+        1,
+        0.5,
+        1.0,
+        500.0
+    );
+}
+
+int main(int argc, char** argv) {
+    std::vector<objects::Sphere> spheres;
+    std::vector<objects::Cylinder> cylinders;
+    std::vector<objects::Plane> planes;
+    std::vector<objects::Cube> cubes;
+    std::vector<objects::Light> lights;
+    if (argc >= 2) {
+        std::cout << argv[0] << std::endl;
+        std::cout << argv[1] << std::endl;
+
+        std::ifstream fin(argv[1]);
+
+        if (!fin) {
+            throw std::runtime_error("Failed to scene file");
+        }
+
+        std::string objectType = "";
+        while (fin >> objectType) {
+            std::cout << objectType << std::endl;
+            if (objectType == "SPHERE") {
+                spheres.push_back(objects::Sphere());
+                spheres.back().setMaterial(readMaterial(fin));
+                spheres.back().addTransformation(readTransformationMatrix(fin));
+            }
+            if (objectType == "CYLINDER") {
+                cylinders.push_back(objects::Cylinder());
+                cylinders.back().setMaterial(readMaterial(fin));
+                cylinders.back().addTransformation(readTransformationMatrix(fin));
+            }
+            if (objectType == "PLANE") {
+                planes.push_back(objects::Plane());
+                planes.back().setMaterial(readMaterial(fin));
+                planes.back().addTransformation(readTransformationMatrix(fin));
+            }
+            if (objectType == "CUBE") {
+                cubes.push_back(objects::Cube());
+                cubes.back().setMaterial(readMaterial(fin));
+                cubes.back().addTransformation(readTransformationMatrix(fin));
+            }
+            if (objectType == "LIGHT") {
+                readMaterial(fin);
+                readTransformationMatrix(fin);
+            }
+            if (objectType == "CAMERA") {
+                readMaterial(fin);
+                readTransformationMatrix(fin);
+            }
+        }
+
+        fin.close();
+    }
+
     objects::Light l(
-        drawing::Colour({1.0,1.0,1.0}),
-        primitives::Point3D({-10,10,-10,1})
-    );
-
-    objects::Sphere floor({0,0,0,1});
-    floor.setMaterial(primitives::BaseMaterial(
-        drawing::Colour({0.222, 0.222, 0.222}),
-        1,
-        0.9,
-        0.9,
-        200.0,
-        0.25
-    ));
-
-    floor.addTransformation(
-        math::Transformations::scale<primitives::PrecisionType>(10.0, 0.01, 10.0)
-    );
-
-    floor.addTransformation(
-        math::Transformations::translate<primitives::PrecisionType>(0.0,-0.6,0.0)
-    );
-
-    objects::Plane leftWall;
-    leftWall.setMaterial(primitives::BaseMaterial(
-        drawing::Colour({0.3, 0.2, 0.85}),
-        1,
-        1.0,
-        0.2,
-        20.0
-    ));
-
-    leftWall.addTransformation(
-        math::Transformations::rotateX<primitives::PrecisionType>(M_PI / 2)
-    );
-
-    leftWall.addTransformation(
-        math::Transformations::translate<primitives::PrecisionType>(0.0, 0.0, 2.0)
-    );
-
-    objects::Plane rightWall;
-    rightWall.setMaterial(primitives::BaseMaterial(
-        drawing::Colour({0.3, 0.5, 0.2}),
-        1,
-        1.0,
-        0.2,
-        20.0
-    ));
-
-    rightWall.addTransformation(
-        math::Transformations::rotateX<primitives::PrecisionType>(M_PI / 2)
-    );
-
-    rightWall.addTransformation(
-        math::Transformations::rotateY<primitives::PrecisionType>(M_PI / 2)
-    );
-
-    rightWall.addTransformation(
-        math::Transformations::translate<primitives::PrecisionType>(3.5, 0.0, 2.0)
+        drawing::Colour({ 1.0,1.0,1.0 }),
+        primitives::Point3D({ -10,10,-10,1 })
     );
 
     world::World w;
     w.addObject(l);
-    w.addObject(floor);
-    w.addObject(leftWall);
-    w.addObject(rightWall);
+    
+    for (objects::Sphere& s : spheres) { w.addObject(s); }
+    for (objects::Cylinder& s : cylinders) { w.addObject(s); }
+    for (objects::Cube& s : cubes) { w.addObject(s); }
+    for (objects::Plane& s : planes) { w.addObject(s); }
+    for (objects::Light& s : lights) { w.addObject(s); }
 
-    // std::vector<objects::Sphere> dogParts = dogObjects();
-
-    // for (const objects::Sphere& part : dogParts) {
-    //     w.addObject(part);
-    // }
-
-    objects::Cylinder cylinder;
-    cylinder.setMaterial(primitives::BaseMaterial(
-        drawing::Colour({0.8, 0.2, 0.2}),
-        1,
-        1.0,
-        0.2,
-        20.0
-    ));
-
-    cylinder.addTransformation(
-        math::Transformations::translate<primitives::PrecisionType>(0.0,0.5,0.0)
-    );
-
-    w.addObject(cylinder);
-
-    world::Camera<600, 400> camera(M_PI/3);
+    world::Camera<300, 200> camera(M_PI/3);
     camera.setTransformation(world::Operations::calculateCameraTransformation(
-        primitives::Point3D({-3.75,2.0,-3.0,1.0}),
+        primitives::Point3D({-3.75 * 3.0,2.0 * 3.0,-3.0 * 3.0,1.0}),
         primitives::Point3D({0,0,0,1}),
         primitives::Vector3D({0,1,0,1})
     ));
