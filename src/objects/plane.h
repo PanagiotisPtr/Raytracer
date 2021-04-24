@@ -8,6 +8,7 @@
 #include "object.h"
 #include "cube.h"
 #include "math/constants.h"
+#include "math/transformations.h"
 
 namespace objects {
 
