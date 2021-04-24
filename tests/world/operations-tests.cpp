@@ -59,7 +59,7 @@ TEST(reflectivityColourTest, colourWithReflectivity) {
 
     drawing::Colour c = world::Operations::colourAtIntersection(w, r, 2);
 
-    ASSERT_GT(c.red(), 0);
+    ASSERT_DOUBLE_EQ(c.red(), 0);
 }
 
 TEST(refractionWorldTests, testRefractedRay) {
