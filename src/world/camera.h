@@ -1,6 +1,10 @@
 #ifndef WORLD_CAMERA_H
 #define WORLD_CAMERA_H
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 #include <cmath>
 #include <thread>
 #include <mutex>
@@ -89,10 +93,11 @@ public:
     }
 
     drawing::Canvas<Width, Height>* render(const World& w, unsigned blockSize = 64) {
-        auto image = new drawing::Canvas<Width, Height>();
+        auto image = (drawing::Canvas<Width, Height>*)malloc(sizeof(drawing::Canvas<Width, Height>));
         const unsigned numberOfThreads = std::thread::hardware_concurrency();
 
         this->renderQueue = this->generateRenderBlocks(blockSize);
+
 
         std::queue<std::thread> pool;
         for (unsigned i = 0; i < numberOfThreads; i++) {

@@ -1,6 +1,10 @@
 #include <iostream>
 #include <vector>
 
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
+
 #include "math/point.h"
 #include "math/vector.h"
 #include "math/matrix.h"
@@ -312,7 +316,7 @@ int main() {
     auto image = camera.render(w);
     image->save("render.ppm");
 
-    delete image;
+    free(image);
 
     return 0;
 }
