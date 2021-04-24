@@ -2,6 +2,8 @@
 #define OBJECTS_PLANE_H
 
 #include <vector>
+#include <cmath>
+#include <math.h>
 
 #include "object.h"
 #include "math/constants.h"
@@ -21,7 +23,7 @@ protected:
 
     std::vector<primitives::PrecisionType> getLocalRayIntersections(const primitives::Ray& r) const override {
         // line is parallel to the plane (also avoid division by 0 later on)
-        if (r.getDirection()[1] <= math::EQUALITY_DELTA) {
+        if (std::abs(r.getDirection()[1]) <= math::EQUALITY_DELTA) {
             return {};
         }
         // plane's y coordinate is 0.
