@@ -36,7 +36,7 @@ public:
                 primitives::Vector3D in = primitives::Vector3D({0,0,0,0}) - rayDirection;
                 primitives::Vector3D normal = object.getNormalAt(p);
                 bool inside = math::Operations::dotProduct(normal, in) < 0 ? true : false;
-                bool inShadow = false;//Operations::shadowed(p, l, w);
+                bool inShadow = Operations::shadowed(p, l, w);
 
                 if (inside) {
                     normal = primitives::Vector3D({0,0,0,0}) - normal;
