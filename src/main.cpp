@@ -245,6 +245,162 @@ primitives::BaseMaterial readMaterial(std::istream& in) {
     );
 }
 
+void renderCoverImage() {
+    objects::Light l(
+        drawing::Colour({ 1.0,1.0,1.0 }),
+        primitives::Point3D({ -10,10,-10,1 })
+    );
+
+    world::World w;
+    w.addObject(l);
+
+    objects::Sphere sphere;
+    objects::Cylinder cylinder;
+    objects::Cube cube;
+    objects::Plane right;
+    objects::Plane floor;
+
+    right.addTransformation(
+        math::Transformations::scale<primitives::PrecisionType>(1.4, 0.6, 1.0)
+    );
+    
+    floor.addTransformation(
+        math::Transformations::scale<primitives::PrecisionType>(10.0, 10.0, 10.0)
+    );
+
+    floor.setMaterial(primitives::BaseMaterial(
+        drawing::Colour({ (double)0.1, (double)0.5, (double)0.1 }),
+        1,
+        0.5,
+        0.1,
+        500.0,
+        0.0,
+        0.0,
+        1.0
+    ));
+
+    right.setMaterial(primitives::BaseMaterial(
+        drawing::Colour({ (double)0.1, (double)0.1, (double)0.1 }),
+        0.5,
+        0.6,
+        1.0,
+        500.0,
+        1.0,
+        0.0,
+        1.0
+    ));
+
+    right.addTransformation(
+        math::Transformations::rotateX<primitives::PrecisionType>(M_PI / 2)
+    );
+
+    right.addTransformation(
+        math::Transformations::rotateY<primitives::PrecisionType>(M_PI / 8)
+    );
+
+    right.addTransformation(
+        math::Transformations::translate<primitives::PrecisionType>(0.0, 1.0, 2.0)
+    );
+
+    sphere.addTransformation(
+        math::Transformations::scale<primitives::PrecisionType>(0.4, 0.4, 0.4)
+    );
+
+    sphere.setMaterial(primitives::BaseMaterial(
+        drawing::Colour({ (double)1.0, (double)0.0, (double)0.4 }),
+        1,
+        0.5,
+        1.0,
+        2000.0,
+        0.0,
+        0.0,
+        1.0
+    ));
+
+    sphere.addTransformation(
+        math::Transformations::translate<primitives::PrecisionType>(0.0, 0.4, 0.0)
+    );
+
+    cube.setMaterial(primitives::BaseMaterial(
+        drawing::Colour({ (double)0.0, (double)0.3, (double)0.8 }),
+        1,
+        0.5,
+        0.3,
+        500.0,
+        0.3,
+        0.5,
+        1.0
+    ));
+
+    cube.addTransformation(
+        math::Transformations::scale<primitives::PrecisionType>(0.3, 0.3, 0.3)
+    );
+
+    cube.addTransformation(
+        math::Transformations::translate<primitives::PrecisionType>(1.5, -0.2, -1.2)
+    );
+
+    cube.addTransformation(
+        math::Transformations::rotateX<primitives::PrecisionType>(M_PI / 4)
+    );
+
+    cube.addTransformation(
+        math::Transformations::rotateY<primitives::PrecisionType>(M_PI / 4)
+    );
+
+    cube.addTransformation(
+        math::Transformations::rotateZ<primitives::PrecisionType>(M_PI / 4)
+    );
+
+    cylinder.setMaterial(primitives::BaseMaterial(
+        drawing::Colour({ (double)0.4, (double)0.0, (double)0.8 }),
+        0.8,
+        0.8,
+        0.6,
+        500.0,
+        0.8,
+        0.0,
+        1.0
+    ));
+
+    cylinder.addTransformation(
+        math::Transformations::scale<primitives::PrecisionType>(0.3, 1.0, 0.3)
+    );
+
+    cylinder.addTransformation(
+        math::Transformations::rotateX<primitives::PrecisionType>(M_PI / 2)
+    );
+
+    cylinder.addTransformation(
+        math::Transformations::rotateY<primitives::PrecisionType>(M_PI / 4)
+    );
+
+    cylinder.addTransformation(
+        math::Transformations::translate<primitives::PrecisionType>(-2.0, 0.33, -0.4)
+    );
+
+    cylinder.addTransformation(
+        math::Transformations::rotateY<primitives::PrecisionType>(M_PI / 4)
+    );
+
+    w.addObject(floor);
+    w.addObject(right);
+    w.addObject(sphere);
+    w.addObject(cube);
+    w.addObject(cylinder);
+
+    world::Camera<1920, 1080> camera(M_PI/3);
+    camera.setTransformation(world::Operations::calculateCameraTransformation(
+        primitives::Point3D({-3.75, 1.4, -3.0, 1.0}),
+        primitives::Point3D({0.0,0.5,0.0,1.0}),
+        primitives::Vector3D({0,1,0,1})
+    ));
+    auto image = camera.render(w);
+    image->save("render.ppm");
+
+    free(image);
+}
+
 int main(int argc, char** argv) {
     std::vector<objects::Sphere> spheres;
     std::vector<objects::Cylinder> cylinders;
@@ -295,6 +451,10 @@ int main(int argc, char** argv) {
         }
 
         fin.close();
+    } else {
+        renderCoverImage();
+        
+        return 0;
     }
 
     objects::Light l(
