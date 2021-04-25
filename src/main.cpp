@@ -2,6 +2,7 @@
 #include <vector>
 #include <exception>
 #include <fstream>
+#include <cassert>
 
 #ifndef M_PI
     #define M_PI 3.14159265358979323846
@@ -401,6 +402,274 @@ void renderCoverImage() {
     free(image);
 }
 
+primitives::BaseMaterial readMaterialFromInstructions(std::istream& in) {
+    double red,green,blue,a,d,sp,sh,r,t,ri;
+
+    std::string op;
+    while (in >> op) {
+        if (op == "END") {
+            in >> op;
+            return primitives::BaseMaterial(drawing::Colour({red,green,blue}),a,d,sp,sh,r,t,ri);
+        }
+        if (op == "COLOUR") in >> red >> green >> blue;
+        if (op == "AMBIENT") in >> a;
+        if (op == "DIFFUSE") in >> d;
+        if (op == "SPECULAR") in >> sp;
+        if (op == "SHININESS") in >> sh;
+        if (op == "REFLECTIVITY") in >> r;
+        if (op == "TRANSPARENCY") in >> t;
+        if (op == "RI") in >> ri;
+    }
+
+    return primitives::BaseMaterial(drawing::Colour({red,green,blue}),a,d,sp,sh,r,t,ri);
+}
+
+primitives::TransformationMatrix readTransformationsFromInstructions(std::istream& in) {
+    primitives::TransformationMatrix rv =
+        math::Matrix<primitives::PrecisionType, 4, 4>::getIdentity();
+    
+    double x, y, z, r;
+    std::string op;
+    while (in >> op) {
+        if (op == "END") {
+            in >> op;
+            return rv;
+        }
+        if (op == "SCALE") {
+            in >> x >> y >> z;
+            rv = math::Transformations::scale<primitives::PrecisionType>(x, y, z) * rv;
+        }
+        if (op == "TRANSLATE") {
+            in >> x >> y >> z;
+            rv = math::Transformations::translate<primitives::PrecisionType>(x, y, z) * rv;
+        }
+        if (op == "ROTATE_X") {
+            in >> r;
+            rv = math::Transformations::rotateX<primitives::PrecisionType>(r) * rv;
+        }
+        if (op == "ROTATE_Y") {
+            in >> r;
+            rv = math::Transformations::rotateY<primitives::PrecisionType>(r) * rv;
+        }
+        if (op == "ROTATE_Z") {
+            in >> r;
+            rv = math::Transformations::rotateZ<primitives::PrecisionType>(r) * rv;
+        }
+    }
+
+    return rv;
+}
+
+void runInstructionsFile(char* filename) {
+    std::vector<objects::Sphere> spheres;
+    std::vector<objects::Cylinder> cylinders;
+    std::vector<objects::Plane> planes;
+    std::vector<objects::Cube> cubes;
+    std::vector<objects::Light> lights;
+    world::Camera<1280, 720> camera(M_PI/3);
+    world::World w;
+
+    std::ifstream fin(filename);
+    std::string ins;
+
+    fin >> ins;
+    if (ins != "OUTPUT_FILE") {
+        std::cout << "First line must contain OUTPUT_FILE instruction" << std::endl;
+        return;
+    }
+    std::string outputFilename; fin >> outputFilename;
+
+    while (fin >> ins) {
+        if (ins != "START") {
+            std::cout << "Expected 'START', found " << ins << std::endl;
+            fin.close();
+
+            return;
+        }
+        std::string type; fin >> type;
+        if (type == "CAMERA") {
+            primitives::Point3D location;
+            primitives::Point3D lookat;
+            location[3] = 1.0;
+
+            std::string op;
+            while (fin >> op) {
+                if (op == "END") {
+                    fin >> op;
+                    break;
+                }
+                if (op == "LOCATION") {
+                    fin >> location[0] >> location[1] >> location[2];
+                }
+                if (op == "LOOK_AT") {
+                    fin >> lookat[0] >> lookat[1] >> lookat[2];
+                }
+            }
+
+            camera.setTransformation(world::Operations::calculateCameraTransformation(
+                location,
+                lookat,
+                primitives::Vector3D({0,1,0,1})
+            ));
+        } else if (type == "LIGHT") {
+            drawing::Colour colour;
+            primitives::Point3D location;
+            location[3] = 1.0;
+
+            std::string op;
+            while (fin >> op) {
+                if (op == "END") {
+                    fin >> op;
+                    break;
+                }
+                if (op == "LOCATION") {
+                    fin >> location[0] >> location[1] >> location[2];
+                }
+                if (op == "COLOUR") {
+                    double r,g,b; fin >> r >> g >> b;
+                    colour = drawing::Colour({r,g,b});
+                }
+            }
+
+            lights.push_back(objects::Light(colour, location));
+        } else if (type == "OBJECT") {
+            std::string name; fin >> name;
+            if (name == "PLANE") {
+                primitives::BaseMaterial material;
+                primitives::TransformationMatrix transform
+                    = math::Matrix<primitives::PrecisionType, 4, 4>::getIdentity();
+                
+                std::string op; fin >> op;
+                while (fin >> op) {
+                    if (op == "END") {
+                        fin >> op;
+                        break;
+                    }
+                    if (op == "MATERIAL") {
+                        material = readMaterialFromInstructions(fin);
+                    }
+                    if (op == "TRANSFORMATION") {
+                        transform = readTransformationsFromInstructions(fin);
+                    }
+                }
+
+                objects::Plane p;
+                p.setMaterial(material);
+                p.addTransformation(transform);
+                planes.push_back(p);
+            }
+            if (name == "SPHERE") {
+                primitives::BaseMaterial material;
+                primitives::TransformationMatrix transform
+                    = math::Matrix<primitives::PrecisionType, 4, 4>::getIdentity();
+                
+                std::string op; fin >> op;
+                while (fin >> op) {
+                    if (op == "END") {
+                        fin >> op;
+                        break;
+                    }
+                    if (op == "MATERIAL") {
+                        material = readMaterialFromInstructions(fin);
+                    }
+                    if (op == "TRANSFORMATION") {
+                        transform = readTransformationsFromInstructions(fin);
+                    }
+                }
+
+                objects::Sphere s;
+                s.setMaterial(material);
+                s.addTransformation(transform);
+                spheres.push_back(s);
+            }
+            if (name == "CUBE") {
+                primitives::BaseMaterial material;
+                primitives::TransformationMatrix transform
+                    = math::Matrix<primitives::PrecisionType, 4, 4>::getIdentity();
+                
+                std::string op; fin >> op;
+                while (fin >> op) {
+                    if (op == "END") {
+                        fin >> op;
+                        break;
+                    }
+                    if (op == "MATERIAL") {
+                        material = readMaterialFromInstructions(fin);
+                    }
+                    if (op == "TRANSFORMATION") {
+                        transform = readTransformationsFromInstructions(fin);
+                    }
+                }
+
+                objects::Cube c;
+                c.setMaterial(material);
+                c.addTransformation(transform);
+                cubes.push_back(c);
+            }
+            if (name == "CYLINDER") {
+                primitives::BaseMaterial material;
+                primitives::TransformationMatrix transform
+                    = math::Matrix<primitives::PrecisionType, 4, 4>::getIdentity();
+                
+                std::string op; fin >> op;
+                while (fin >> op) {
+                    if (op == "END") {
+                        fin >> op;
+                        break;
+                    }
+                    if (op == "MATERIAL") {
+                        material = readMaterialFromInstructions(fin);
+                    }
+                    if (op == "TRANSFORMATION") {
+                        transform = readTransformationsFromInstructions(fin);
+                    }
+                }
+
+                objects::Cylinder c;
+                c.setMaterial(material);
+                c.addTransformation(transform);
+                cylinders.push_back(c);
+            }
+        } else {
+            std::cout << "Uknown type: " << type << std::endl;
+            fin.close();
+            return;
+        }
+    }
+    fin.close();
+    
+    for (objects::Light& s : lights) { w.addObject(s); }
+    for (objects::Sphere& s : spheres) { w.addObject(s); }
+    for (objects::Cylinder& s : cylinders) { w.addObject(s); }
+    for (objects::Cube& s : cubes) { w.addObject(s); }
+    for (objects::Plane& s : planes) { w.addObject(s); }
+
+    auto image = camera.render(w);
+    image->save(outputFilename + ".ppm");
+
+    free(image);
+}
+
+bool isInstructionsFile(char* filename) {
+    size_t i = 0;
+    size_t j = 0;
+    std::string ext = ".ins";
+    while (filename[i]) {
+        if (filename[i] == ext[j]) {
+            j++;
+        } else {
+            j = 0;
+        }
+        if (j == 4) {
+            return true;
+        }
+
+        i++;
+    }
+
+    return false;
+}
+
 int main(int argc, char** argv) {
     std::vector<objects::Sphere> spheres;
     std::vector<objects::Cylinder> cylinders;
@@ -408,8 +677,11 @@ int main(int argc, char** argv) {
     std::vector<objects::Cube> cubes;
     std::vector<objects::Light> lights;
     if (argc >= 2) {
-        std::cout << argv[0] << std::endl;
-        std::cout << argv[1] << std::endl;
+        if (isInstructionsFile(argv[1])) {
+            runInstructionsFile(argv[1]);
+
+            return 0;
+        }
 
         std::ifstream fin(argv[1]);
 

@@ -1,1 +1,1 @@
-./build/src/raytracer
+./build/src/raytracer $1
