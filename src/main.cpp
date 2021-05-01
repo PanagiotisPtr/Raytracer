@@ -390,7 +390,7 @@ void renderCoverImage() {
     w.addObject(cube);
     w.addObject(cylinder);
 
-    world::Camera<1920, 1080> camera(M_PI/3);
+    world::Camera<640, 360> camera(M_PI/3);
     camera.setTransformation(world::Operations::calculateCameraTransformation(
         primitives::Point3D({-3.75, 1.4, -3.0, 1.0}),
         primitives::Point3D({0.0,0.5,0.0,1.0}),
@@ -466,7 +466,7 @@ void runInstructionsFile(char* filename) {
     std::vector<objects::Plane> planes;
     std::vector<objects::Cube> cubes;
     std::vector<objects::Light> lights;
-    world::Camera<1280, 720> camera(M_PI/3);
+    world::Camera<640, 360> camera(M_PI/3);
     world::World w;
 
     std::ifstream fin(filename);
@@ -743,7 +743,7 @@ int main(int argc, char** argv) {
     for (objects::Plane& s : planes) { w.addObject(s); }
     for (objects::Light& s : lights) { w.addObject(s); }
 
-    world::Camera<300, 200> camera(M_PI/3);
+    world::Camera<640, 360> camera(M_PI/3);
     camera.setTransformation(world::Operations::calculateCameraTransformation(
         primitives::Point3D({-3.75 * 3.0,2.0 * 3.0,-3.0 * 3.0,1.0}),
         primitives::Point3D({0,0,0,1}),
